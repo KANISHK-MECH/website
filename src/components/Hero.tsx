@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Download, Github, Linkedin, ChevronDown, Zap, Rocket, Plane } from 'lucide-react';
+import { Github, Linkedin, ChevronDown, Zap, Rocket, Plane } from 'lucide-react';
 
 const Hero: React.FC = () => {
   const scrollToNext = () => {
@@ -191,51 +191,46 @@ const Hero: React.FC = () => {
               transition={{ delay: 0.8, duration: 0.6 }}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-6"
             >
-              <motion.button
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 20px 40px rgba(213, 170, 255, 0.4)"
-                }}
-                whileTap={{ scale: 0.95 }}
-                className="group relative w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 overflow-hidden"
-              >
-                <motion.div
-                  animate={{ x: [-100, 100] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-                />
-                <div className="relative flex items-center justify-center">
-                  <Download className="w-5 h-5 mr-2" />
-                  Download Resume
-                </div>
-              </motion.button>
-              
+              {/* Enhanced Social Links - Now in the main button space */}
               <div className="flex space-x-4">
                 <motion.a
                   whileHover={{ 
                     scale: 1.1,
-                    boxShadow: "0 10px 30px rgba(250, 208, 201, 0.4)"
+                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.4)"
                   }}
                   whileTap={{ scale: 0.9 }}
                   href="https://github.com/KANISHK-MECH/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-4 bg-pastel-peach/20 dark:bg-gray-800/50 hover:bg-pastel-peach/30 dark:hover:bg-gray-700/70 backdrop-blur-sm border border-pastel-peach/30 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-300"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 overflow-hidden flex items-center"
                 >
-                  <Github className="w-6 h-6" />
+                  <motion.div
+                    animate={{ x: [-100, 100] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                  />
+                  <Github className="w-5 h-5 mr-2 relative z-10" />
+                  <span className="relative z-10">GitHub</span>
                 </motion.a>
+                
                 <motion.a
                   whileHover={{ 
                     scale: 1.1,
-                    boxShadow: "0 10px 30px rgba(255, 195, 160, 0.4)"
+                    boxShadow: "0 20px 40px rgba(250, 208, 201, 0.4)"
                   }}
                   whileTap={{ scale: 0.9 }}
                   href="https://www.linkedin.com/in/kanishkrmech/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-4 bg-pastel-orange/20 dark:bg-gray-800/50 hover:bg-pastel-orange/30 dark:hover:bg-gray-700/70 backdrop-blur-sm border border-pastel-orange/30 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-xl transition-all duration-300"
+                  className="group relative px-8 py-4 bg-gradient-to-r from-pastel-orange to-pastel-peach dark:from-orange-500 dark:to-pink-500 hover:from-pastel-peach hover:to-pastel-cream dark:hover:from-pink-500 dark:hover:to-yellow-500 text-white font-bold rounded-xl transition-all duration-300 overflow-hidden flex items-center"
                 >
-                  <Linkedin className="w-6 h-6" />
+                  <motion.div
+                    animate={{ x: [-100, 100] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                  />
+                  <Linkedin className="w-5 h-5 mr-2 relative z-10" />
+                  <span className="relative z-10">LinkedIn</span>
                 </motion.a>
               </div>
             </motion.div>
