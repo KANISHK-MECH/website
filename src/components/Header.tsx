@@ -52,48 +52,64 @@ const Header: React.FC = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-4 left-4 right-4 z-50 bg-white/95 dark:bg-forest-900/95 backdrop-blur-xl border border-sage-200 dark:border-forest-700 rounded-2xl shadow-lg"
+      className="fixed top-4 left-4 right-4 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-pastel-lavender/30 rounded-3xl shadow-2xl shadow-pastel-lavender/20"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-16">
-          {/* Brand */}
+      <div className="max-w-7xl mx-auto px-8">
+        <div className="flex justify-between items-center h-20">
+          {/* Left Section - Brand */}
           <motion.div
             whileHover={{ scale: 1.02 }}
-            className="flex items-center space-x-3"
+            className="flex items-center space-x-4"
           >
-            <div className="flex items-center space-x-3">
+            {/* Name and Title */}
+            <div className="flex items-center space-x-4">
               <motion.span 
-                className="text-xl font-bold text-forest-600 dark:text-emerald-400"
+                className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender to-pastel-pink"
+                animate={{ 
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                style={{ backgroundSize: "200% 200%" }}
               >
-                KANISHK R
+                KANISHK 
               </motion.span>
-              <div className="h-6 w-px bg-sage-300 dark:bg-forest-600"></div>
-              <span className="text-xs text-forest-500 dark:text-sage-400 font-medium tracking-wider">
+              <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
+              <span className="text-sm text-gray-600 dark:text-gray-300 font-bold tracking-wider">
                 MECHANICAL ENGINEER
               </span>
             </div>
           </motion.div>
 
-          {/* Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1 bg-sage-50 dark:bg-forest-800 rounded-xl p-1">
+          {/* Center Section - Navigation */}
+          <nav className="hidden lg:flex items-center space-x-1 bg-gradient-to-r from-pastel-peach/10 to-pastel-cream/10 backdrop-blur-sm rounded-2xl p-2 border border-pastel-peach/20">
             {navigation.map((item) => (
               <motion.button
                 key={item.name}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ 
+                  scale: 1.05,
+                  boxShadow: "0 8px 25px rgba(213, 170, 255, 0.3)"
+                }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => scrollToSection(item.href)}
-                className={`relative px-3 py-2 rounded-lg text-xs font-medium transition-all duration-300 flex items-center ${
+                className={`relative px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center overflow-hidden ${
                   activeSection === item.href.slice(1)
-                    ? 'bg-emerald-500 text-white shadow-md'
-                    : 'text-forest-600 dark:text-sage-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-white/50 dark:hover:bg-forest-700/50'
+                    ? 'bg-gradient-to-r from-pastel-lavender to-pastel-pink text-white shadow-xl'
+                    : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-white/50'
                 }`}
               >
                 {activeSection === item.href.slice(1) && (
-                  <motion.div
-                    layoutId="activeTab"
-                    className="absolute inset-0 bg-emerald-500 rounded-lg"
-                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                  />
+                  <>
+                    <motion.div
+                      layoutId="activeTab"
+                      className="absolute inset-0 bg-gradient-to-r from-pastel-lavender to-pastel-pink rounded-xl"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                    <motion.div
+                      animate={{ x: [-100, 100] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                    />
+                  </>
                 )}
                 <item.icon className="w-3.5 h-3.5 mr-1.5 relative z-10" />
                 <span className="relative z-10">{item.name}</span>
@@ -101,20 +117,23 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* Controls */}
-          <div className="flex items-center space-x-3">
+          {/* Right Section - Controls */}
+          <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
             <motion.button
-              whileHover={{ scale: 1.1 }}
+              whileHover={{ 
+                scale: 1.1,
+                boxShadow: "0 8px 25px rgba(213, 170, 255, 0.3)"
+              }}
               whileTap={{ scale: 0.9 }}
               onClick={toggleTheme}
-              className="p-2.5 rounded-xl bg-sage-100 dark:bg-forest-800 text-forest-600 dark:text-sage-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+              className="ml-8 p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-300"
             >
               <motion.div
                 animate={{ rotate: isDark ? 180 : 0 }}
                 transition={{ duration: 0.5 }}
               >
-                {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </motion.div>
             </motion.button>
 
@@ -123,45 +142,56 @@ const Header: React.FC = () => {
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-2.5 rounded-xl bg-sage-100 dark:bg-forest-800 text-forest-600 dark:text-sage-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors"
+              className="lg:hidden p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-300"
             >
               <motion.div
                 animate={{ rotate: isMenuOpen ? 180 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                {isMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+                {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.div>
             </motion.button>
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Enhanced Mobile Navigation */}
         {isMenuOpen && (
           <motion.nav
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden py-4 border-t border-sage-200 dark:border-forest-700 mt-4"
+            className="lg:hidden py-6 border-t border-pastel-lavender/20 mt-4"
           >
-            <div className="flex flex-col space-y-2">
+            <div className="flex flex-col space-y-3">
               {navigation.map((item, index) => (
                 <motion.button
                   key={item.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02, x: 8 }}
+                  whileHover={{ 
+                    scale: 1.02,
+                    x: 8,
+                    boxShadow: "0 5px 15px rgba(213, 170, 255, 0.2)"
+                  }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => scrollToSection(item.href)}
-                  className={`flex items-center px-4 py-3 rounded-xl text-sm font-medium transition-all duration-300 ${
+                  className={`flex items-center px-6 py-4 rounded-2xl text-sm font-bold transition-all duration-300 relative overflow-hidden ${
                     activeSection === item.href.slice(1)
-                      ? 'bg-emerald-500 text-white shadow-md'
-                      : 'text-forest-600 dark:text-sage-300 hover:text-emerald-600 dark:hover:text-emerald-400 hover:bg-sage-50 dark:hover:bg-forest-800'
+                      ? 'bg-gradient-to-r from-pastel-lavender to-pastel-pink text-white shadow-xl'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-gradient-to-r hover:from-pastel-peach/10 hover:to-pastel-cream/10'
                   }`}
                 >
-                  <item.icon className="w-4 h-4 mr-3" />
-                  <span>{item.name}</span>
+                  {activeSection === item.href.slice(1) && (
+                    <motion.div
+                      animate={{ x: [-100, 100] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                    />
+                  )}
+                  <item.icon className="w-5 h-5 mr-4 relative z-10" />
+                  <span className="relative z-10">{item.name}</span>
                 </motion.button>
               ))}
             </div>
