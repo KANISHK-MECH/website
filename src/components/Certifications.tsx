@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Award, Calendar, Upload, ExternalLink } from 'lucide-react';
+import { Award, Calendar, Upload, ExternalLink, Plus } from 'lucide-react';
 import { certifications } from '../data/portfolio';
 
 const Certifications: React.FC = () => {
@@ -92,7 +92,7 @@ const Certifications: React.FC = () => {
           ))}
         </div>
 
-        {/* Add new certification */}
+        {/* New Certification Button */}
         <motion.div
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -103,10 +103,10 @@ const Certifications: React.FC = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="px-8 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors flex items-center mx-auto font-medium"
+            className="px-8 py-4 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white rounded-xl font-bold transition-all duration-300 flex items-center mx-auto shadow-lg hover:shadow-xl"
           >
-            <Upload className="w-5 h-5 mr-2" />
-            Add New Certification
+            <Plus className="w-5 h-5 mr-2" />
+            New Certification
           </motion.button>
         </motion.div>
       </div>

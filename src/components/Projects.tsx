@@ -1,6 +1,6 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Code, Camera, Rocket, Plane, Zap, Settings } from 'lucide-react';
+import { Camera, Rocket, Plane, Zap, Settings } from 'lucide-react';
 import { projects } from '../data/portfolio';
 
 const Projects: React.FC = memo(() => {
@@ -19,7 +19,7 @@ const Projects: React.FC = memo(() => {
     switch (category) {
       case 'UAV': return Rocket;
       case 'CAD': return Settings;
-      case 'Software': return Code;
+      case 'Software': return Zap;
       case 'Hardware': return Zap;
       default: return Plane;
     }
@@ -55,7 +55,7 @@ const Projects: React.FC = memo(() => {
           rotate: [0, 90, 180]
         }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute top-10 right-20 opacity-10 dark:opacity-15 will-change-transform"
+        className="absolute top-10 right-20 opacity-10 dark:opacity-15"
       >
         <Rocket className="w-20 h-20 text-pastel-lavender dark:text-purple-400" />
       </motion.div>
@@ -156,7 +156,7 @@ const Projects: React.FC = memo(() => {
                   </p>
 
                   {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="flex flex-wrap gap-2">
                     {project.techStack.slice(0, 3).map((tech, techIndex) => (
                       <span
                         key={techIndex}
@@ -171,16 +171,6 @@ const Projects: React.FC = memo(() => {
                       </span>
                     )}
                   </div>
-
-                  {/* Action Button */}
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className="w-full px-5 py-2.5 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center justify-center"
-                  >
-                    <Code className="w-4 h-4 mr-2" />
-                    <span>View Project</span>
-                  </motion.button>
                 </div>
               </motion.div>
             );
@@ -194,7 +184,7 @@ const Projects: React.FC = memo(() => {
             className="text-center py-12"
           >
             <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center">
-              <Code className="w-8 h-8 text-white" />
+              <Rocket className="w-8 h-8 text-white" />
             </div>
             <p className="text-gray-500 dark:text-gray-400 text-lg">
               No projects found for the selected category.
