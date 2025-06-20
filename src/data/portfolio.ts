@@ -212,6 +212,10 @@ export const achievements: Achievement[] = [
 export const skills: Skill[] = [
   // Flight Controllers
   { name: 'Pixhawk', category: 'Flight Controllers', proficiency: 95 },
+  { name: 'Pixhawk Cube', category: 'Flight Controllers', proficiency: 92 },
+  { name: 'K++', category: 'Flight Controllers', proficiency: 88 },
+  { name: 'HC Robotics E504', category: 'Flight Controllers', proficiency: 85 },
+  { name: 'Speedybee Wing F405', category: 'Flight Controllers', proficiency: 90 },
   { name: 'KK 2.1.5', category: 'Flight Controllers', proficiency: 90 },
   { name: 'DJI Naza', category: 'Flight Controllers', proficiency: 85 },
   { name: 'ArduCopter', category: 'Flight Controllers', proficiency: 88 },
@@ -223,6 +227,10 @@ export const skills: Skill[] = [
   { name: 'Betaflight', category: 'UAV Software', proficiency: 92 },
   { name: 'Mission Planner', category: 'UAV Software', proficiency: 90 },
   { name: 'ArduPilot', category: 'UAV Software', proficiency: 88 },
+  { name: 'Jiyi', category: 'UAV Software', proficiency: 85 },
+  { name: 'Impulse RC', category: 'UAV Software', proficiency: 82 },
+  { name: 'DJI Assistant', category: 'UAV Software', proficiency: 88 },
+  { name: 'CleanFlight', category: 'UAV Software', proficiency: 85 },
   { name: 'Pix4D', category: 'UAV Software', proficiency: 75 },
   { name: 'Skydeck', category: 'UAV Software', proficiency: 70 },
   { name: 'INAV', category: 'UAV Software', proficiency: 80 },
@@ -231,6 +239,7 @@ export const skills: Skill[] = [
   // Design Software
   { name: 'Fusion 360', category: 'Design Software', proficiency: 95 },
   { name: 'NX CAD', category: 'Design Software', proficiency: 90 },
+  { name: 'PTC Creo', category: 'Design Software', proficiency: 92 },
   { name: 'SolidWorks', category: 'Design Software', proficiency: 88 },
   { name: 'Solid Edge', category: 'Design Software', proficiency: 85 },
   { name: 'AutoCAD', category: 'Design Software', proficiency: 92 },
