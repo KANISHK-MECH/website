@@ -243,7 +243,7 @@ const About: React.FC = () => {
               </div>
             </motion.div>
 
-            {/* Enhanced Key Highlights for Dark Mode */}
+            {/* Enhanced Key Highlights for Dark Mode - 2x2 Grid Layout */}
             <div className="space-y-6">
               <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6 flex items-center">
                 <motion.div
@@ -256,53 +256,55 @@ const About: React.FC = () => {
                 Key Highlights
               </h3>
               
-              {highlights.map((highlight, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.2, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
-                  }}
-                  className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
-                >
-                  {/* Enhanced Animated Border for Dark Mode */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {highlights.map((highlight, index) => (
                   <motion.div
-                    animate={{ 
-                      background: [
-                        "linear-gradient(0deg, transparent, transparent)",
-                        "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
-                        "linear-gradient(360deg, transparent, transparent)"
-                      ]
+                    key={index}
+                    initial={{ opacity: 0, x: 20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.2, duration: 0.6 }}
+                    viewport={{ once: true }}
+                    whileHover={{ 
+                      scale: 1.02,
+                      boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
                     }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
-                  />
-                  
-                  <div className="relative flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <motion.div 
-                        className={`w-14 h-14 bg-gradient-to-r ${highlight.color} rounded-xl flex items-center justify-center shadow-lg`}
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <highlight.icon className="w-7 h-7 text-white" />
-                      </motion.div>
+                    className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
+                  >
+                    {/* Enhanced Animated Border for Dark Mode */}
+                    <motion.div
+                      animate={{ 
+                        background: [
+                          "linear-gradient(0deg, transparent, transparent)",
+                          "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
+                          "linear-gradient(360deg, transparent, transparent)"
+                        ]
+                      }}
+                      transition={{ duration: 3, repeat: Infinity }}
+                      className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
+                    />
+                    
+                    <div className="relative flex items-start space-x-4">
+                      <div className="flex-shrink-0">
+                        <motion.div 
+                          className={`w-14 h-14 bg-gradient-to-r ${highlight.color} rounded-xl flex items-center justify-center shadow-lg`}
+                          whileHover={{ rotate: 360 }}
+                          transition={{ duration: 0.6 }}
+                        >
+                          <highlight.icon className="w-7 h-7 text-white" />
+                        </motion.div>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+                          {highlight.title}
+                        </h4>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                          {highlight.description}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                        {highlight.title}
-                      </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                        {highlight.description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
