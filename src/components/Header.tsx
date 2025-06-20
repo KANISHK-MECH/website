@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Moon, Sun, Menu, X, Home, User, BookOpen, Briefcase, Code, Award, Trophy, Mail } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
+import { usePerformanceOptimization } from '../hooks/usePerformanceOptimization';
 
-const Header: React.FC = () => {
+const Header: React.FC = memo(() => {
   const { isDark, toggleTheme } = useTheme();
+  const { config } = usePerformanceOptimization();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
 
@@ -19,97 +21,96 @@ const Header: React.FC = () => {
     { name: 'Contact', href: '#contact', icon: Mail },
   ];
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = navigation.map(nav => nav.href.slice(1));
-      const scrollPosition = window.scrollY + 100;
+  const handleScroll = useCallback(() => {
+    const sections = navigation.map(nav => nav.href.slice(1));
+    const scrollPosition = window.scrollY + 100;
 
-      for (const section of sections) {
-        const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section);
-            break;
-          }
+    for (const section of sections) {
+      const element = document.getElementById(section);
+      if (element) {
+        const { offsetTop, offsetHeight } = element;
+        if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+          setActiveSection(section);
+          break;
         }
+      }
+    }
+  }, [navigation]);
+
+  useEffect(() => {
+    // Throttle scroll events for better performance
+    let ticking = false;
+    const throttledScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          handleScroll();
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    window.addEventListener('scroll', throttledScroll, { passive: true });
+    return () => window.removeEventListener('scroll', throttledScroll);
+  }, [handleScroll]);
 
-  const scrollToSection = (href: string) => {
+  const scrollToSection = useCallback((href: string) => {
     const element = document.getElementById(href.slice(1));
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
-  };
+  }, []);
+
+  const toggleMenu = useCallback(() => {
+    setIsMenuOpen(prev => !prev);
+  }, []);
 
   return (
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="fixed top-4 left-4 right-4 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-pastel-lavender/30 rounded-3xl shadow-2xl shadow-pastel-lavender/20"
+      transition={{ duration: 0.4 }}
+      className="fixed top-4 left-4 right-4 z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border border-pastel-lavender/30 rounded-3xl shadow-2xl shadow-pastel-lavender/20 gpu-accelerated"
     >
       <div className="max-w-7xl mx-auto px-8">
         <div className="flex justify-between items-center h-20">
-          {/* Left Section - Brand */}
+          {/* Brand Section */}
           <motion.div
-            whileHover={{ scale: 1.02 }}
-            className="flex items-center space-x-4"
+            whileHover={{ scale: 1.01 }}
+            className="flex items-center space-x-4 hw-accelerated"
           >
-            {/* Name and Title */}
             <div className="flex items-center space-x-4">
-              <motion.span 
-                className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender to-pastel-pink"
-                animate={{ 
-                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                style={{ backgroundSize: "200% 200%" }}
-              >
+              <span className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pastel-lavender to-pastel-pink optimized-text">
                 KANISHK 
-              </motion.span>
+              </span>
               <div className="h-8 w-px bg-gray-300 dark:bg-gray-600"></div>
-              <span className="text-sm text-gray-600 dark:text-gray-300 font-bold tracking-wider">
+              <span className="text-sm text-gray-600 dark:text-gray-300 font-bold tracking-wider optimized-text">
                 MECHANICAL ENGINEER
               </span>
             </div>
           </motion.div>
 
-          {/* Center Section - Navigation */}
+          {/* Navigation */}
           <nav className="hidden lg:flex items-center space-x-1 bg-gradient-to-r from-pastel-peach/10 to-pastel-cream/10 backdrop-blur-sm rounded-2xl p-2 border border-pastel-peach/20">
             {navigation.map((item) => (
               <motion.button
                 key={item.name}
-                whileHover={{ 
-                  scale: 1.05,
-                  boxShadow: "0 8px 25px rgba(213, 170, 255, 0.3)"
-                }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => scrollToSection(item.href)}
-                className={`relative px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 flex items-center overflow-hidden ${
+                className={`relative px-4 py-2.5 rounded-xl text-xs font-bold transition-all duration-200 flex items-center overflow-hidden hw-accelerated smooth-transition ${
                   activeSection === item.href.slice(1)
                     ? 'bg-gradient-to-r from-pastel-lavender to-pastel-pink text-white shadow-xl'
                     : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-white/50'
                 }`}
               >
-                {activeSection === item.href.slice(1) && (
-                  <>
-                    <motion.div
-                      layoutId="activeTab"
-                      className="absolute inset-0 bg-gradient-to-r from-pastel-lavender to-pastel-pink rounded-xl"
-                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                    />
-                    <motion.div
-                      animate={{ x: [-100, 100] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-                    />
-                  </>
+                {activeSection === item.href.slice(1) && config.enableAnimations && (
+                  <motion.div
+                    layoutId="activeTab"
+                    className="absolute inset-0 bg-gradient-to-r from-pastel-lavender to-pastel-pink rounded-xl"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
                 )}
                 <item.icon className="w-3.5 h-3.5 mr-1.5 relative z-10" />
                 <span className="relative z-10">{item.name}</span>
@@ -117,21 +118,19 @@ const Header: React.FC = () => {
             ))}
           </nav>
 
-          {/* Right Section - Controls */}
+          {/* Controls */}
           <div className="flex items-center space-x-4">
             {/* Theme Toggle */}
             <motion.button
-              whileHover={{ 
-                scale: 1.1,
-                boxShadow: "0 8px 25px rgba(213, 170, 255, 0.3)"
-              }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={toggleTheme}
-              className="ml-8 p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-300"
+              className="ml-8 p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-200 hw-accelerated smooth-transition"
             >
               <motion.div
                 animate={{ rotate: isDark ? 180 : 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.3 }}
+                className="hw-accelerated"
               >
                 {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
               </motion.div>
@@ -139,14 +138,15 @@ const Header: React.FC = () => {
 
             {/* Mobile Menu Button */}
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-300"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={toggleMenu}
+              className="lg:hidden p-3 rounded-2xl bg-gradient-to-r from-pastel-peach/20 to-pastel-cream/20 backdrop-blur-sm border border-pastel-peach/30 text-gray-600 hover:text-pastel-lavender hover:border-pastel-lavender/50 transition-all duration-200 hw-accelerated smooth-transition"
             >
               <motion.div
                 animate={{ rotate: isMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.2 }}
+                className="hw-accelerated"
               >
                 {isMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </motion.div>
@@ -154,13 +154,13 @@ const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Enhanced Mobile Navigation */}
+        {/* Mobile Navigation */}
         {isMenuOpen && (
           <motion.nav
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.2 }}
             className="lg:hidden py-6 border-t border-pastel-lavender/20 mt-4"
           >
             <div className="flex flex-col space-y-3">
@@ -169,27 +169,16 @@ const Header: React.FC = () => {
                   key={item.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    x: 8,
-                    boxShadow: "0 5px 15px rgba(213, 170, 255, 0.2)"
-                  }}
-                  whileTap={{ scale: 0.98 }}
+                  transition={{ delay: index * 0.05 }}
+                  whileHover={{ scale: 1.01, x: 8 }}
+                  whileTap={{ scale: 0.99 }}
                   onClick={() => scrollToSection(item.href)}
-                  className={`flex items-center px-6 py-4 rounded-2xl text-sm font-bold transition-all duration-300 relative overflow-hidden ${
+                  className={`flex items-center px-6 py-4 rounded-2xl text-sm font-bold transition-all duration-200 relative overflow-hidden hw-accelerated smooth-transition ${
                     activeSection === item.href.slice(1)
                       ? 'bg-gradient-to-r from-pastel-lavender to-pastel-pink text-white shadow-xl'
                       : 'text-gray-600 hover:text-gray-800 hover:bg-gradient-to-r hover:from-pastel-peach/10 hover:to-pastel-cream/10'
                   }`}
                 >
-                  {activeSection === item.href.slice(1) && (
-                    <motion.div
-                      animate={{ x: [-100, 100] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
-                    />
-                  )}
                   <item.icon className="w-5 h-5 mr-4 relative z-10" />
                   <span className="relative z-10">{item.name}</span>
                 </motion.button>
@@ -200,6 +189,8 @@ const Header: React.FC = () => {
       </div>
     </motion.header>
   );
-};
+});
+
+Header.displayName = 'Header';
 
 export default Header;

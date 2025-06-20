@@ -1,3 +1,75 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Performance optimizations for 60fps */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* GPU acceleration for animations */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Optimize scrolling performance */
+body {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+}
+
+/* Reduce paint and layout thrashing */
+.optimized-animation {
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Smooth transitions */
+.smooth-transition {
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Prevent layout shifts */
+.prevent-layout-shift {
+  contain: layout style paint;
+}
+
+/* Optimize text rendering */
+.optimized-text {
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hardware acceleration for transforms */
+.hw-accelerated {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Optimize background attachments */
+.optimized-bg {
+  background-attachment: scroll;
+}
+
+/* Reduce repaints */
+.no-repaint {
+  contain: paint;
+}
+
+/* Critical CSS for above-the-fold content */
+@layer base {
+  .hero-optimized {
+    contain: layout style paint;
+    will-change: transform;
+    transform: translateZ(0);
+  }
+}
