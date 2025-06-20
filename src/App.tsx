@@ -1,9 +1,8 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import { usePerformanceOptimization } from './hooks/usePerformanceOptimization';
 
-// Lazy load non-critical components for better initial performance
+// Lazy load non-critical components
 const About = lazy(() => import('./components/About'));
 const Education = lazy(() => import('./components/Education'));
 const Internships = lazy(() => import('./components/Internships'));
@@ -14,7 +13,7 @@ const Achievements = lazy(() => import('./components/Achievements'));
 const Contact = lazy(() => import('./components/Contact'));
 const Footer = lazy(() => import('./components/Footer'));
 
-// Loading component for better UX
+// Loading component
 const SectionLoader: React.FC = () => (
   <div className="py-20 flex items-center justify-center">
     <div className="w-8 h-8 border-2 border-pastel-lavender border-t-transparent rounded-full animate-spin"></div>
@@ -22,61 +21,26 @@ const SectionLoader: React.FC = () => (
 );
 
 function App() {
-  const { config } = usePerformanceOptimization();
-
   useEffect(() => {
-    // Critical performance optimizations
-    const optimizeApp = () => {
-      // Disable smooth scrolling on low-end devices
-      if (!config.enableAnimations) {
-        document.documentElement.style.scrollBehavior = 'auto';
-      }
+    // Preload critical images
+    const preloadImages = [
+      '/KANISHK_R_22ME015-removebg-preview.png',
+      '/WhatsApp Image 2025-06-20 at 00.22.32_49ff0e19.jpg',
+      '/logo dh.png'
+    ];
 
-      // Optimize font loading
-      if ('fonts' in document) {
-        document.fonts.ready.then(() => {
-          document.body.classList.add('fonts-loaded');
-        });
-      }
-
-      // Preload critical resources
-      const preloadLink = document.createElement('link');
-      preloadLink.rel = 'preload';
-      preloadLink.as = 'image';
-      preloadLink.href = '/KANISHK_R_22ME015-removebg-preview.png';
-      document.head.appendChild(preloadLink);
-
-      // Set CSS custom properties for performance
-      document.documentElement.style.setProperty('--enable-animations', config.enableAnimations ? '1' : '0');
-      document.documentElement.style.setProperty('--particle-count', config.particleCount.toString());
-      
-      // Enable hardware acceleration globally
-      document.body.style.transform = 'translateZ(0)';
-      document.body.style.backfaceVisibility = 'hidden';
-    };
-
-    // Use requestIdleCallback for non-critical optimizations
-    if ('requestIdleCallback' in window) {
-      requestIdleCallback(optimizeApp);
-    } else {
-      setTimeout(optimizeApp, 0);
-    }
-
-    // Cleanup function
-    return () => {
-      document.body.style.transform = '';
-      document.body.style.backfaceVisibility = '';
-    };
-  }, [config]);
+    preloadImages.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200 gpu-accelerated">
+    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-200">
       <Header />
       <main className="relative">
-        {/* Critical above-the-fold content */}
         <Hero />
         
-        {/* Lazy-loaded sections with suspense boundaries */}
         <Suspense fallback={<SectionLoader />}>
           <About />
         </Suspense>

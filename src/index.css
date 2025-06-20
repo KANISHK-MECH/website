@@ -2,74 +2,76 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Performance optimizations for 60fps */
-* {
-  box-sizing: border-box;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
 }
 
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D5AAFF;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c084fc;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-track {
+  background: #374151;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #6b7280;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
 }
 
-/* GPU acceleration for animations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform;
-  backface-visibility: hidden;
-  perspective: 1000px;
+/* Custom animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
 }
 
-/* Optimize scrolling performance */
-body {
-  -webkit-overflow-scrolling: touch;
-  overflow-x: hidden;
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(213, 170, 255, 0.3); }
+  50% { box-shadow: 0 0 40px rgba(213, 170, 255, 0.6); }
 }
 
-/* Reduce paint and layout thrashing */
-.optimized-animation {
-  will-change: transform, opacity;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-/* Smooth transitions */
-.smooth-transition {
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
 
-/* Prevent layout shifts */
-.prevent-layout-shift {
-  contain: layout style paint;
+/* Performance optimizations */
+* {
+  box-sizing: border-box;
 }
 
-/* Optimize text rendering */
-.optimized-text {
-  text-rendering: optimizeSpeed;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+img {
+  max-width: 100%;
+  height: auto;
 }
 
-/* Hardware acceleration for transforms */
-.hw-accelerated {
-  transform: translate3d(0, 0, 0);
-  will-change: transform;
-}
-
-/* Optimize background attachments */
-.optimized-bg {
-  background-attachment: scroll;
-}
-
-/* Reduce repaints */
-.no-repaint {
-  contain: paint;
-}
-
-/* Critical CSS for above-the-fold content */
-@layer base {
-  .hero-optimized {
-    contain: layout style paint;
-    will-change: transform;
-    transform: translateZ(0);
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
