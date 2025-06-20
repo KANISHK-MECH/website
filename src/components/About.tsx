@@ -242,203 +242,211 @@ const About: React.FC = () => {
                 </div>
               </div>
             </motion.div>
-
-            {/* Enhanced Key Highlights for Dark Mode - Aligned as in Image */}
-            <div className="space-y-6">
-              <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6 flex items-center">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="w-8 h-8 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center mr-3"
-                >
-                  <Zap className="w-4 h-4 text-white" />
-                </motion.div>
-                Key Highlights
-              </h3>
-              
-              {/* 2x2 Grid Layout as shown in image */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Top Row */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
-                  }}
-                  className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
-                >
-                  <motion.div
-                    animate={{ 
-                      background: [
-                        "linear-gradient(0deg, transparent, transparent)",
-                        "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
-                        "linear-gradient(360deg, transparent, transparent)"
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
-                  />
-                  
-                  <div className="relative flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <motion.div 
-                        className="w-14 h-14 bg-gradient-to-r from-pastel-cream to-pastel-orange dark:from-yellow-500 dark:to-orange-500 rounded-xl flex items-center justify-center shadow-lg"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <Award className="w-7 h-7 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                        DGCA Certified Drone Pilot
-                      </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                        Licensed for Small Category UAV operations
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
-                  }}
-                  className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
-                >
-                  <motion.div
-                    animate={{ 
-                      background: [
-                        "linear-gradient(0deg, transparent, transparent)",
-                        "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
-                        "linear-gradient(360deg, transparent, transparent)"
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
-                  />
-                  
-                  <div className="relative flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <motion.div 
-                        className="w-14 h-14 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 rounded-xl flex items-center justify-center shadow-lg"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <Zap className="w-7 h-7 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                        Advanced CAD & Simulation Expert
-                      </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                        Proficient in multiple design software platforms
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                {/* Bottom Row */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
-                  }}
-                  className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
-                >
-                  <motion.div
-                    animate={{ 
-                      background: [
-                        "linear-gradient(0deg, transparent, transparent)",
-                        "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
-                        "linear-gradient(360deg, transparent, transparent)"
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
-                  />
-                  
-                  <div className="relative flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <motion.div 
-                        className="w-14 h-14 bg-gradient-to-r from-pastel-peach to-pastel-cream dark:from-pink-500 dark:to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <Target className="w-7 h-7 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                        National Finalist
-                      </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                        Smart India Hackathon 2023
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
-                  viewport={{ once: true }}
-                  whileHover={{ 
-                    scale: 1.02,
-                    boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
-                  }}
-                  className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
-                >
-                  <motion.div
-                    animate={{ 
-                      background: [
-                        "linear-gradient(0deg, transparent, transparent)",
-                        "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
-                        "linear-gradient(360deg, transparent, transparent)"
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                    className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
-                  />
-                  
-                  <div className="relative flex items-start space-x-4">
-                    <div className="flex-shrink-0">
-                      <motion.div 
-                        className="w-14 h-14 bg-gradient-to-r from-pastel-pink to-pastel-lavender dark:from-pink-500 dark:to-purple-500 rounded-xl flex items-center justify-center shadow-lg"
-                        whileHover={{ rotate: 360 }}
-                        transition={{ duration: 0.6 }}
-                      >
-                        <Building2 className="w-7 h-7 text-white" />
-                      </motion.div>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                        Startup Founder - DRONOTIC HUB
-                      </h4>
-                      <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
-                        Connecting drone pilots with customers nationwide
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              </div>
-            </div>
           </motion.div>
         </div>
+
+        {/* Enhanced Key Highlights - Full Width Stretch */}
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0, duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-16"
+        >
+          <div className="text-center mb-12">
+            <h3 className="text-2xl font-bold text-gray-700 dark:text-gray-200 mb-6 flex items-center justify-center">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                className="w-8 h-8 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 rounded-full flex items-center justify-center mr-3"
+              >
+                <Zap className="w-4 h-4 text-white" />
+              </motion.div>
+              Key Highlights
+            </h3>
+          </div>
+          
+          {/* Full Width 2x2 Grid Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Top Row */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.1, duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
+              }}
+              className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
+            >
+              <motion.div
+                animate={{ 
+                  background: [
+                    "linear-gradient(0deg, transparent, transparent)",
+                    "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
+                    "linear-gradient(360deg, transparent, transparent)"
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
+              />
+              
+              <div className="relative flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <motion.div 
+                    className="w-14 h-14 bg-gradient-to-r from-pastel-cream to-pastel-orange dark:from-yellow-500 dark:to-orange-500 rounded-xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Award className="w-7 h-7 text-white" />
+                  </motion.div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+                    DGCA Certified Drone Pilot
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                    Licensed for Small Category UAV operations
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
+              }}
+              className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
+            >
+              <motion.div
+                animate={{ 
+                  background: [
+                    "linear-gradient(0deg, transparent, transparent)",
+                    "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
+                    "linear-gradient(360deg, transparent, transparent)"
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
+              />
+              
+              <div className="relative flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <motion.div 
+                    className="w-14 h-14 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 rounded-xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Zap className="w-7 h-7 text-white" />
+                  </motion.div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+                    Advanced CAD & Simulation Expert
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                    Proficient in multiple design software platforms
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Bottom Row */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3, duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
+              }}
+              className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
+            >
+              <motion.div
+                animate={{ 
+                  background: [
+                    "linear-gradient(0deg, transparent, transparent)",
+                    "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
+                    "linear-gradient(360deg, transparent, transparent)"
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
+              />
+              
+              <div className="relative flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <motion.div 
+                    className="w-14 h-14 bg-gradient-to-r from-pastel-peach to-pastel-cream dark:from-pink-500 dark:to-yellow-500 rounded-xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Target className="w-7 h-7 text-white" />
+                  </motion.div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+                    National Finalist
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                    Smart India Hackathon 2023
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4, duration: 0.6 }}
+              viewport={{ once: true }}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 20px 40px rgba(213, 170, 255, 0.2)"
+              }}
+              className="group relative p-6 bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 transition-all duration-300"
+            >
+              <motion.div
+                animate={{ 
+                  background: [
+                    "linear-gradient(0deg, transparent, transparent)",
+                    "linear-gradient(180deg, rgba(213,170,255,0.2), transparent)",
+                    "linear-gradient(360deg, transparent, transparent)"
+                  ]
+                }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity dark:opacity-30 dark:group-hover:opacity-100"
+              />
+              
+              <div className="relative flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <motion.div 
+                    className="w-14 h-14 bg-gradient-to-r from-pastel-pink to-pastel-lavender dark:from-pink-500 dark:to-purple-500 rounded-xl flex items-center justify-center shadow-lg"
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <Building2 className="w-7 h-7 text-white" />
+                  </motion.div>
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-700 dark:text-gray-200 mb-2 text-lg group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+                    Startup Founder - DRONOTIC HUB
+                  </h4>
+                  <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed">
+                    Connecting drone pilots with customers nationwide
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
