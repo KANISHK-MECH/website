@@ -134,9 +134,6 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => 
                     required
                   />
                 </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Must be: {AUTHORIZED_EMAIL}
-                </p>
               </div>
 
               <div>
