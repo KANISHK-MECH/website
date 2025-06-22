@@ -1,8 +1,9 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check } from 'lucide-react';
-import { projects } from '../data/portfolio';
+import { projects as initialProjects } from '../data/portfolio';
 import { skills } from '../data/portfolio';
+import { Project } from '../types';
 
 interface NewProject {
   title: string;
@@ -14,6 +15,8 @@ interface NewProject {
 }
 
 const Projects: React.FC = memo(() => {
+  // Local state to manage current projects
+  const [currentProjects, setCurrentProjects] = useState<Project[]>(initialProjects);
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProject, setNewProject] = useState<NewProject>({
@@ -29,11 +32,12 @@ const Projects: React.FC = memo(() => {
   
   const categories = useMemo(() => ['All', 'UAV', 'CAD', 'Software', 'Hardware'], []);
   
+  // Use currentProjects instead of the imported projects
   const filteredProjects = useMemo(() => 
     activeFilter === 'All' 
-      ? projects 
-      : projects.filter(project => project.category === activeFilter),
-    [activeFilter]
+      ? currentProjects 
+      : currentProjects.filter(project => project.category === activeFilter),
+    [activeFilter, currentProjects]
   );
 
   // Get all available technologies from skills data
@@ -113,10 +117,24 @@ const Projects: React.FC = memo(() => {
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically save the project to your data store
-    console.log('New project:', newProject);
     
-    // Reset form
+    // Generate a unique ID for the new project
+    const newId = `project-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Create the new project object
+    const projectToAdd: Project = {
+      id: newId,
+      title: newProject.title,
+      description: newProject.description,
+      category: newProject.category,
+      year: newProject.year,
+      techStack: newProject.techStack
+    };
+    
+    // Add the new project to the current projects state
+    setCurrentProjects(prev => [projectToAdd, ...prev]);
+    
+    // Reset form and close modal
     setNewProject({
       title: '',
       description: '',
@@ -127,6 +145,9 @@ const Projects: React.FC = memo(() => {
     });
     setImagePreview(null);
     setShowAddForm(false);
+    
+    // Show success feedback
+    console.log('Project added successfully:', projectToAdd);
   }, [newProject]);
 
   const resetForm = useCallback(() => {
