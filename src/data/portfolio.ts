@@ -48,49 +48,7 @@ export const internships: Internship[] = [
 ];
 
 export const certifications: Certification[] = [
-  {
-    id: '1',
-    title: 'DGCA Remote Pilot License',
-    issuer: 'Sri Eshwar DroneTech',
-    year: '2024',
-    credentialId: '21240104D81KR'
-  },
-  {
-    id: '2',
-    title: 'Robotics Certification',
-    issuer: 'Infosys Springboard',
-    year: '2024'
-  },
-  {
-    id: '3',
-    title: 'EV Engineering',
-    issuer: 'Forage',
-    year: '2024'
-  },
-  {
-    id: '4',
-    title: 'Siemens Solid Edge Associate',
-    issuer: 'Siemens',
-    year: '2023'
-  },
-  {
-    id: '5',
-    title: 'AutoCAD 3D Modeling',
-    issuer: 'Infosys Springboard',
-    year: '2023'
-  },
-  {
-    id: '6',
-    title: 'Fusion 360 Design',
-    issuer: 'Coursera',
-    year: '2023'
-  },
-  {
-    id: '7',
-    title: 'C Programming Bootcamp',
-    issuer: 'Udemy',
-    year: '2022'
-  }
+  // All certifications removed - start with empty array
 ];
 
 export const achievements: Achievement[] = [
