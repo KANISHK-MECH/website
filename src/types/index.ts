@@ -7,6 +7,7 @@ export interface Project {
   githubUrl?: string;
   demoUrl?: string;
   category: 'UAV' | 'CAD' | 'Software' | 'Hardware';
+  imageUrl?: string; // Add imageUrl field for storing uploaded images
 }
 
 export interface Internship {
@@ -18,6 +19,7 @@ export interface Internship {
   description: string;
   fullDescription: string;
   skills: string[];
+  imageUrl?: string; // Add imageUrl field for storing uploaded images
 }
 
 export interface Certification {
@@ -26,6 +28,7 @@ export interface Certification {
   issuer: string;
   year: string;
   credentialId?: string;
+  imageUrl?: string; // Add imageUrl field for storing uploaded images
 }
 
 export interface Achievement {
@@ -34,6 +37,7 @@ export interface Achievement {
   description: string;
   year: string;
   category: 'Competition' | 'Publication' | 'Award' | 'Certification';
+  imageUrl?: string; // Add imageUrl field for storing uploaded images
 }
 
 export interface Skill {

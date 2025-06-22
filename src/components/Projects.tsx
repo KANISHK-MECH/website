@@ -100,13 +100,15 @@ const Projects: React.FC = memo(() => {
       return;
     }
 
-    const projectToAdd: Project = {
+    const projectToAdd: Project & { imageUrl?: string } = {
       id: `project-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: newProject.title.trim(),
       description: newProject.description.trim(),
       category: newProject.category,
       year: newProject.year,
-      techStack: newProject.techStack
+      techStack: newProject.techStack,
+      // Store the image preview URL for display
+      imageUrl: newProject.imagePreview
     };
     
     const success = await addItem('projects', projectToAdd);
@@ -392,6 +394,7 @@ const Projects: React.FC = memo(() => {
         >
           {filteredProjects.map((project, index) => {
             const colorClass = getCategoryColor(project.category);
+            const projectWithImage = project as Project & { imageUrl?: string };
             
             return (
               <motion.div
@@ -404,13 +407,30 @@ const Projects: React.FC = memo(() => {
                 whileHover={{ y: -5 }}
                 className="group relative bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 overflow-hidden transition-all duration-300"
               >
-                {/* Project Image Placeholder */}
-                <div className="relative h-40 bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400 overflow-hidden">
-                  <div className="text-center p-4">
-                    <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
-                    <p className="font-bold text-sm">Project Showcase</p>
-                    <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
-                  </div>
+                {/* Project Image */}
+                <div className="relative h-40 overflow-hidden">
+                  {projectWithImage.imageUrl ? (
+                    <div className="relative w-full h-full">
+                      <img
+                        src={projectWithImage.imageUrl}
+                        alt={project.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+                      <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full p-2">
+                        <Camera className="w-4 h-4 text-white" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                      <div className="text-center p-4">
+                        <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
+                        <p className="font-bold text-sm">Project Showcase</p>
+                        <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Project Content */}
