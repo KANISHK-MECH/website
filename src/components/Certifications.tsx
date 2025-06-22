@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Award, Calendar, Upload, ExternalLink, Plus, X, Check } from 'lucide-react';
+import { Award, Calendar, Upload, ExternalLink, Plus, X, Check, Lock } from 'lucide-react';
 import { useDatabase } from '../hooks/useDatabase';
+import { useAuth } from '../hooks/useAuth';
 import { Certification } from '../types';
 import ImageUpload from './ImageUpload';
+import AuthModal from './AuthModal';
 
 interface NewCertification {
   title: string;
@@ -16,7 +18,9 @@ interface NewCertification {
 
 const Certifications: React.FC = () => {
   const { certifications, addItem, loading } = useDatabase();
+  const { isAuthenticated, user } = useAuth();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [newCertification, setNewCertification] = useState<NewCertification>({
@@ -43,8 +47,26 @@ const Certifications: React.FC = () => {
     }
   };
 
+  const handleAddClick = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowAddForm(true);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    setShowAddForm(true);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     
     const certificationToAdd: Certification & { imageUrl?: string } = {
       id: `cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -94,17 +116,30 @@ const Certifications: React.FC = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
+            onClick={handleAddClick}
             className="mt-6 px-6 py-3 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center mx-auto shadow-lg hover:shadow-xl"
           >
-            <Plus className="w-5 h-5 mr-2" />
-            Add Certification
+            {isAuthenticated ? <Plus className="w-5 h-5 mr-2" /> : <Lock className="w-5 h-5 mr-2" />}
+            {isAuthenticated ? 'Add Certification' : 'Sign In to Add'}
           </motion.button>
+
+          {isAuthenticated && user && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+              Signed in as {user.email}
+            </p>
+          )}
         </motion.div>
+
+        {/* Authentication Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={handleAuthSuccess}
+        />
 
         {/* Add Certification Form Modal */}
         <AnimatePresence>
-          {showAddForm && (
+          {showAddForm && isAuthenticated && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -345,7 +380,7 @@ const Certifications: React.FC = () => {
               <Award className="w-8 h-8 text-white" />
             </div>
             <p className="text-gray-500 dark:text-gray-400 text-lg">
-              No certifications added yet. Click "Add Certification" to get started!
+              No certifications added yet. {isAuthenticated ? 'Click "Add Certification" to get started!' : 'Sign in to add certifications!'}
             </p>
           </motion.div>
         )}

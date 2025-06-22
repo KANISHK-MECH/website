@@ -107,6 +107,12 @@ export function useDatabase() {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('You must be signed in to add items');
+      }
+
       let insertData: any;
       let tableName: string;
 
@@ -187,6 +193,12 @@ export function useDatabase() {
   const updateItem = useCallback(async (type: keyof Omit<DatabaseState, 'loading' | 'error'>, id: string, updates: any) => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
+
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('You must be signed in to update items');
+      }
 
       let updateData: any;
       let tableName: string;
@@ -269,6 +281,12 @@ export function useDatabase() {
   const deleteItem = useCallback(async (type: keyof Omit<DatabaseState, 'loading' | 'error'>, id: string) => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
+
+      // Check if user is authenticated
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        throw new Error('You must be signed in to delete items');
+      }
 
       let tableName: string;
       switch (type) {
