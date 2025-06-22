@@ -36,23 +36,24 @@ const Certifications: React.FC = () => {
     setNewCertification(prev => ({ ...prev, image: undefined, imagePreview: undefined }));
   };
 
-  const handleViewCertificate = (cert: Certification & { imageUrl?: string }) => {
-    if (cert.imageUrl) {
-      setSelectedImage(cert.imageUrl);
-      setShowImageModal(true);
-    }
+  const handleViewCertificate = (cert: Certification) => {
+    // For now, we'll show a placeholder since we're not storing images
+    // In a production app, this would show the actual certificate image from cloud storage
+    setSelectedImage('https://via.placeholder.com/800x600/4F46E5/FFFFFF?text=Certificate+Image+Not+Available');
+    setShowImageModal(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const certificationToAdd: Certification & { imageUrl?: string } = {
+    // Don't store the image data in localStorage - only store the basic certification info
+    const certificationToAdd: Certification = {
       id: `cert-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: newCertification.title,
       issuer: newCertification.issuer,
       year: newCertification.year,
-      credentialId: newCertification.credentialId || undefined,
-      imageUrl: newCertification.imagePreview
+      credentialId: newCertification.credentialId || undefined
+      // Note: imageUrl is removed to prevent localStorage quota issues
     };
     
     const success = await addItem('certifications', certificationToAdd);
@@ -133,16 +134,21 @@ const Certifications: React.FC = () => {
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Certificate Image Upload */}
+                  {/* Certificate Image Upload - Note: Image will not be saved to localStorage */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Certificate Image
+                      Certificate Image (Preview Only)
                     </label>
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-3 mb-3">
+                      <p className="text-yellow-800 dark:text-yellow-200 text-sm">
+                        <strong>Note:</strong> Images are for preview only and will not be saved. For production use, implement cloud storage for image persistence.
+                      </p>
+                    </div>
                     <ImageUpload
                       onImageSelect={handleImageSelect}
                       onImageRemove={handleImageRemove}
                       preview={newCertification.imagePreview}
-                      placeholder="Upload your certificate image"
+                      placeholder="Upload your certificate image (preview only)"
                     />
                   </div>
 
@@ -271,8 +277,6 @@ const Certifications: React.FC = () => {
         {certifications.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {certifications.map((cert, index) => {
-              const certWithImage = cert as Certification & { imageUrl?: string };
-              
               return (
                 <motion.div
                   key={cert.id}
@@ -315,20 +319,15 @@ const Certifications: React.FC = () => {
                       </div>
                     )}
 
-                    {/* Action button */}
+                    {/* Action button - disabled since we're not storing images */}
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
-                      onClick={() => handleViewCertificate(certWithImage)}
-                      disabled={!certWithImage.imageUrl}
-                      className={`w-full px-4 py-2 rounded-lg transition-all duration-300 flex items-center justify-center text-sm font-medium ${
-                        certWithImage.imageUrl
-                          ? 'bg-gradient-to-r from-primary-500 to-warning-500 hover:from-primary-600 hover:to-warning-600 text-white'
-                          : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                      }`}
+                      onClick={() => handleViewCertificate(cert)}
+                      className="w-full px-4 py-2 rounded-lg transition-all duration-300 flex items-center justify-center text-sm font-medium bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400"
                     >
                       <ExternalLink className="w-4 h-4 mr-2" />
-                      {certWithImage.imageUrl ? 'View Certificate' : 'No Image Available'}
+                      View Certificate (Demo)
                     </motion.button>
                   </div>
                 </motion.div>

@@ -28,7 +28,8 @@ export interface Certification {
   issuer: string;
   year: string;
   credentialId?: string;
-  imageUrl?: string; // Add imageUrl field for storing uploaded images
+  // imageUrl removed to prevent localStorage quota issues
+  // For production, implement cloud storage and store only the URL
 }
 
 export interface Achievement {
