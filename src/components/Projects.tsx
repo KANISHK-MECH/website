@@ -1,9 +1,10 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check } from 'lucide-react';
-import { projects as initialProjects } from '../data/portfolio';
+import { useDatabase } from '../hooks/useDatabase';
 import { skills } from '../data/portfolio';
 import { Project } from '../types';
+import ImageUpload from './ImageUpload';
 
 interface NewProject {
   title: string;
@@ -12,11 +13,11 @@ interface NewProject {
   year: string;
   techStack: string[];
   image?: File;
+  imagePreview?: string;
 }
 
 const Projects: React.FC = memo(() => {
-  // Local state to manage current projects
-  const [currentProjects, setCurrentProjects] = useState<Project[]>(initialProjects);
+  const { projects, addItem, loading } = useDatabase();
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProject, setNewProject] = useState<NewProject>({
@@ -25,25 +26,22 @@ const Projects: React.FC = memo(() => {
     category: 'UAV',
     year: new Date().getFullYear().toString(),
     techStack: [],
-    image: undefined
+    image: undefined,
+    imagePreview: undefined
   });
-  const [dragActive, setDragActive] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   const categories = useMemo(() => ['All', 'UAV', 'CAD', 'Software', 'Hardware'], []);
   
-  // Use currentProjects instead of the imported projects
   const filteredProjects = useMemo(() => 
     activeFilter === 'All' 
-      ? currentProjects 
-      : currentProjects.filter(project => project.category === activeFilter),
-    [activeFilter, currentProjects]
+      ? projects 
+      : projects.filter(project => project.category === activeFilter),
+    [activeFilter, projects]
   );
 
   // Get all available technologies from skills data
   const availableTechnologies = useMemo(() => {
     const allTechs = skills.map(skill => skill.name);
-    // Add some additional project-specific technologies
     const additionalTechs = [
       'Carbon Fiber', 'Telemetry', 'GPS Navigation', 'Spray System',
       'Radio Control', 'FPV System', 'Camera Gimbal', 'Ducted Props',
@@ -77,34 +75,13 @@ const Projects: React.FC = memo(() => {
     setActiveFilter(category);
   }, []);
 
-  const handleImageUpload = useCallback((file: File) => {
-    setNewProject(prev => ({ ...prev, image: file }));
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setImagePreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleImageSelect = useCallback((file: File, preview: string) => {
+    setNewProject(prev => ({ ...prev, image: file, imagePreview: preview }));
   }, []);
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+  const handleImageRemove = useCallback(() => {
+    setNewProject(prev => ({ ...prev, image: undefined, imagePreview: undefined }));
   }, []);
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleImageUpload(e.dataTransfer.files[0]);
-    }
-  }, [handleImageUpload]);
 
   const toggleTechnology = useCallback((tech: string) => {
     setNewProject(prev => ({
@@ -115,40 +92,31 @@ const Projects: React.FC = memo(() => {
     }));
   }, []);
 
-  const handleSubmit = useCallback((e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Generate a unique ID for the new project
-    const newId = `project-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
-    // Create the new project object
+    if (!newProject.title.trim() || !newProject.description.trim()) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
     const projectToAdd: Project = {
-      id: newId,
-      title: newProject.title,
-      description: newProject.description,
+      id: `project-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      title: newProject.title.trim(),
+      description: newProject.description.trim(),
       category: newProject.category,
       year: newProject.year,
       techStack: newProject.techStack
     };
     
-    // Add the new project to the current projects state
-    setCurrentProjects(prev => [projectToAdd, ...prev]);
-    
-    // Reset form and close modal
-    setNewProject({
-      title: '',
-      description: '',
-      category: 'UAV',
-      year: new Date().getFullYear().toString(),
-      techStack: [],
-      image: undefined
-    });
-    setImagePreview(null);
-    setShowAddForm(false);
-    
-    // Show success feedback
-    console.log('Project added successfully:', projectToAdd);
-  }, [newProject]);
+    const success = await addItem('projects', projectToAdd);
+    if (success) {
+      resetForm();
+      alert('Project added successfully!');
+    } else {
+      alert('Failed to add project. Please try again.');
+    }
+  }, [newProject, addItem]);
 
   const resetForm = useCallback(() => {
     setNewProject({
@@ -157,9 +125,9 @@ const Projects: React.FC = memo(() => {
       category: 'UAV',
       year: new Date().getFullYear().toString(),
       techStack: [],
-      image: undefined
+      image: undefined,
+      imagePreview: undefined
     });
-    setImagePreview(null);
     setShowAddForm(false);
   }, []);
 
@@ -171,7 +139,7 @@ const Projects: React.FC = memo(() => {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(250,208,201,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_50%)]" />
       </div>
 
-      {/* Reduced Floating Elements */}
+      {/* Floating Elements */}
       <motion.div
         animate={{
           x: [0, 50, 0],
@@ -284,55 +252,12 @@ const Projects: React.FC = memo(() => {
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
                           Project Image
                         </label>
-                        <div
-                          className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-                            dragActive
-                              ? 'border-pastel-lavender bg-pastel-lavender/10 dark:border-purple-400 dark:bg-purple-400/10'
-                              : 'border-gray-300 dark:border-gray-600 hover:border-pastel-lavender dark:hover:border-purple-400'
-                          }`}
-                          onDragEnter={handleDrag}
-                          onDragLeave={handleDrag}
-                          onDragOver={handleDrag}
-                          onDrop={handleDrop}
-                        >
-                          {imagePreview ? (
-                            <div className="relative">
-                              <img
-                                src={imagePreview}
-                                alt="Preview"
-                                className="w-full h-48 object-cover rounded-lg"
-                              />
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                type="button"
-                                onClick={() => {
-                                  setImagePreview(null);
-                                  setNewProject(prev => ({ ...prev, image: undefined }));
-                                }}
-                                className="absolute top-2 right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
-                              >
-                                <X className="w-4 h-4" />
-                              </motion.button>
-                            </div>
-                          ) : (
-                            <div>
-                              <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                              <p className="text-gray-600 dark:text-gray-300 font-medium mb-2">
-                                Drop your image here, or click to browse
-                              </p>
-                              <p className="text-gray-400 text-sm">
-                                PNG, JPG, GIF up to 10MB
-                              </p>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                              />
-                            </div>
-                          )}
-                        </div>
+                        <ImageUpload
+                          onImageSelect={handleImageSelect}
+                          onImageRemove={handleImageRemove}
+                          preview={newProject.imagePreview}
+                          placeholder="Upload project image or screenshot"
+                        />
                       </div>
                     </div>
 
@@ -341,7 +266,7 @@ const Projects: React.FC = memo(() => {
                       {/* Project Title */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Project Title
+                          Project Title *
                         </label>
                         <input
                           type="text"
@@ -357,7 +282,7 @@ const Projects: React.FC = memo(() => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Category
+                            Category *
                           </label>
                           <select
                             value={newProject.category}
@@ -372,7 +297,7 @@ const Projects: React.FC = memo(() => {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Year
+                            Year *
                           </label>
                           <input
                             type="number"
@@ -389,7 +314,7 @@ const Projects: React.FC = memo(() => {
                       {/* Description */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Description
+                          Description *
                         </label>
                         <textarea
                           value={newProject.description}
@@ -448,9 +373,10 @@ const Projects: React.FC = memo(() => {
                       type="submit"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      className="px-8 py-3 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl"
+                      disabled={loading}
+                      className="px-8 py-3 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl disabled:opacity-50"
                     >
-                      Add Project
+                      {loading ? 'Adding...' : 'Add Project'}
                     </motion.button>
                   </div>
                 </form>
