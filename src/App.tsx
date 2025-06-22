@@ -46,6 +46,7 @@ function App() {
         localStorage.setItem('portfolio_projects', JSON.stringify([]));
       }
       
+      // Don't override existing certifications - let them load from localStorage
       if (!hasCertifications) {
         localStorage.setItem('portfolio_certifications', JSON.stringify([]));
       }

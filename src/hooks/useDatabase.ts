@@ -29,15 +29,12 @@ export function useDatabase() {
       const storedCertifications = localStorage.getItem('portfolio_certifications');
       const storedAchievements = localStorage.getItem('portfolio_achievements');
 
-      // Force clear certifications localStorage to ensure empty start
-      localStorage.setItem('portfolio_certifications', JSON.stringify([]));
-
       setState({
         // Projects start empty - only load from localStorage if exists
         projects: storedProjects ? JSON.parse(storedProjects) : [],
         internships: storedInternships ? JSON.parse(storedInternships) : initialInternships,
-        // Force certifications to be empty array
-        certifications: [],
+        // Restore certifications from localStorage - this will show your added certifications!
+        certifications: storedCertifications ? JSON.parse(storedCertifications) : [],
         achievements: storedAchievements ? JSON.parse(storedAchievements) : initialAchievements,
         loading: false,
         error: null
@@ -46,6 +43,7 @@ export function useDatabase() {
       // Save initial data if not exists (projects and certifications start as empty arrays)
       if (!storedProjects) localStorage.setItem('portfolio_projects', JSON.stringify([]));
       if (!storedInternships) localStorage.setItem('portfolio_internships', JSON.stringify(initialInternships));
+      if (!storedCertifications) localStorage.setItem('portfolio_certifications', JSON.stringify([]));
       if (!storedAchievements) localStorage.setItem('portfolio_achievements', JSON.stringify(initialAchievements));
     } catch (error) {
       console.error('Error initializing data:', error);
