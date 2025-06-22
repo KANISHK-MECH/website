@@ -33,6 +33,26 @@ function App() {
       const img = new Image();
       img.src = src;
     });
+
+    // Initialize database with default data if empty
+    const initializeDatabase = () => {
+      const hasData = localStorage.getItem('portfolio_projects') || 
+                     localStorage.getItem('portfolio_internships') || 
+                     localStorage.getItem('portfolio_certifications') || 
+                     localStorage.getItem('portfolio_achievements');
+      
+      if (!hasData) {
+        // Import and save initial data
+        import('./data/portfolio').then(({ projects, internships, certifications, achievements }) => {
+          localStorage.setItem('portfolio_projects', JSON.stringify(projects));
+          localStorage.setItem('portfolio_internships', JSON.stringify(internships));
+          localStorage.setItem('portfolio_certifications', JSON.stringify(certifications));
+          localStorage.setItem('portfolio_achievements', JSON.stringify(achievements));
+        });
+      }
+    };
+
+    initializeDatabase();
   }, []);
 
   return (
