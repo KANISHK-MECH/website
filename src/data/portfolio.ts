@@ -1,78 +1,7 @@
 import { Project, Internship, Certification, Achievement, Skill } from '../types';
 
 export const projects: Project[] = [
-  {
-    id: '1',
-    title: 'FPV Freestyle Drone Frame Design',
-    year: '2024',
-    techStack: ['NX CAD', 'Fusion 360', 'Carbon Fiber'],
-    description: 'Custom freestyle drone frame optimized for agility and durability in FPV racing applications.',
-    category: 'UAV'
-  },
-  {
-    id: '2',
-    title: 'Surveillance UAV (VTOL)',
-    year: '2024',
-    techStack: ['Pixhawk', 'ArduPilot', 'Telemetry'],
-    description: 'Vertical take-off and landing surveillance drone with advanced flight control systems.',
-    category: 'UAV'
-  },
-  {
-    id: '3',
-    title: 'Agriculture Drone Design',
-    year: '2023',
-    techStack: ['K++ Controller', 'GPS Navigation', 'Spray System'],
-    description: 'Precision agriculture drone for crop monitoring and pesticide application.',
-    category: 'UAV'
-  },
-  {
-    id: '4',
-    title: 'Vintage RC Aircraft',
-    year: '2023',
-    techStack: ['Speedybee F405 Wing', 'FPV System', 'Radio Control'],
-    description: 'Classic RC aircraft design with modern flight control integration.',
-    category: 'UAV'
-  },
-  {
-    id: '5',
-    title: 'FPV Drone Design (Cinewhoop)',
-    year: '2023',
-    techStack: ['Betaflight', 'Camera Gimbal', 'Ducted Props'],
-    description: 'Compact cinewhoop drone for indoor cinematography and tight space navigation.',
-    category: 'UAV'
-  },
-  {
-    id: '6',
-    title: 'Ring Laser Gyroscope',
-    year: '2024',
-    techStack: ['MATLAB', 'Signal Processing', 'Optical Systems'],
-    description: 'Advanced inertial navigation system using ring laser gyroscope technology.',
-    category: 'Software'
-  },
-  {
-    id: '7',
-    title: 'Smart Glass Cleaning Robot',
-    year: '2023',
-    techStack: ['Fusion 360', 'Arduino', 'Sensors', 'Motors'],
-    description: 'Automated window cleaning robot for high-rise buildings - SIH 2023 finalist project.',
-    category: 'Hardware'
-  },
-  {
-    id: '8',
-    title: 'Automated Smart Dispatch System',
-    year: '2024',
-    techStack: ['Pixhawk', 'Mission Planner', 'Autonomous Navigation'],
-    description: 'Drone-based automated delivery system with smart routing and obstacle avoidance.',
-    category: 'UAV'
-  },
-  {
-    id: '9',
-    title: 'Drone-Based Solar Panel Monitoring',
-    year: '2023',
-    techStack: ['KK 2.1.5 Controller', 'Thermal Camera', 'Data Analytics'],
-    description: 'Autonomous inspection system for solar panel efficiency monitoring and maintenance.',
-    category: 'UAV'
-  }
+  // All projects removed
 ];
 
 export const internships: Internship[] = [
