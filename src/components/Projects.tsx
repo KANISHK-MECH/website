@@ -1,10 +1,12 @@
 import React, { useState, memo, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check } from 'lucide-react';
+import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check, Lock } from 'lucide-react';
 import { useDatabase } from '../hooks/useDatabase';
+import { useAuth } from '../hooks/useAuth';
 import { skills } from '../data/portfolio';
 import { Project } from '../types';
 import ImageUpload from './ImageUpload';
+import AuthModal from './AuthModal';
 
 interface NewProject {
   title: string;
@@ -18,8 +20,10 @@ interface NewProject {
 
 const Projects: React.FC = memo(() => {
   const { projects, addItem, loading } = useDatabase();
+  const { isAuthenticated, user } = useAuth();
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [newProject, setNewProject] = useState<NewProject>({
     title: '',
     description: '',
@@ -75,6 +79,19 @@ const Projects: React.FC = memo(() => {
     setActiveFilter(category);
   }, []);
 
+  const handleAddClick = useCallback(() => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowAddForm(true);
+    }
+  }, [isAuthenticated]);
+
+  const handleAuthSuccess = useCallback(() => {
+    setShowAuthModal(false);
+    setShowAddForm(true);
+  }, []);
+
   const handleImageSelect = useCallback((file: File, preview: string) => {
     setNewProject(prev => ({ ...prev, image: file, imagePreview: preview }));
   }, []);
@@ -94,6 +111,11 @@ const Projects: React.FC = memo(() => {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     
     if (!newProject.title.trim() || !newProject.description.trim()) {
       alert('Please fill in all required fields');
@@ -118,7 +140,7 @@ const Projects: React.FC = memo(() => {
     } else {
       alert('Failed to add project. Please try again.');
     }
-  }, [newProject, addItem]);
+  }, [newProject, addItem, isAuthenticated]);
 
   const resetForm = useCallback(() => {
     setNewProject({
@@ -220,20 +242,35 @@ const Projects: React.FC = memo(() => {
           </div>
 
           {/* Add Project Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
-            className="ml-4 px-6 py-2.5 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Project
-          </motion.button>
+          <div className="flex flex-col items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleAddClick}
+              className="ml-4 px-6 py-2.5 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center shadow-lg hover:shadow-xl"
+            >
+              {isAuthenticated ? <Plus className="w-4 h-4 mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
+              {isAuthenticated ? 'Add Project' : 'Sign In to Add'}
+            </motion.button>
+            
+            {isAuthenticated && user && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Signed in as {user.email}
+              </p>
+            )}
+          </div>
         </motion.div>
+
+        {/* Authentication Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={handleAuthSuccess}
+        />
 
         {/* Add Project Form Modal */}
         <AnimatePresence>
-          {showAddForm && (
+          {showAddForm && isAuthenticated && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

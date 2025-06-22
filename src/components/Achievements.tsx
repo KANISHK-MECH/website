@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, Medal, Award, FileText, Calendar, Plus, X } from 'lucide-react';
+import { Trophy, Medal, Award, FileText, Calendar, Plus, X, Lock } from 'lucide-react';
 import { useDatabase } from '../hooks/useDatabase';
+import { useAuth } from '../hooks/useAuth';
 import { Achievement } from '../types';
 import ImageUpload from './ImageUpload';
+import AuthModal from './AuthModal';
 
 interface NewAchievement {
   title: string;
@@ -16,7 +18,9 @@ interface NewAchievement {
 
 const Achievements: React.FC = () => {
   const { achievements, addItem, loading } = useDatabase();
+  const { isAuthenticated, user } = useAuth();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [newAchievement, setNewAchievement] = useState<NewAchievement>({
     title: '',
     description: '',
@@ -56,6 +60,19 @@ const Achievements: React.FC = () => {
     }
   };
 
+  const handleAddClick = () => {
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+    } else {
+      setShowAddForm(true);
+    }
+  };
+
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    setShowAddForm(true);
+  };
+
   const handleImageSelect = (file: File, preview: string) => {
     setNewAchievement(prev => ({ ...prev, image: file, imagePreview: preview }));
   };
@@ -66,6 +83,11 @@ const Achievements: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      return;
+    }
     
     const achievementToAdd: Achievement = {
       id: `achievement-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -111,20 +133,35 @@ const Achievements: React.FC = () => {
             Recognition for excellence in competitions, publications, and professional development
           </p>
           
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowAddForm(true)}
-            className="mt-6 px-6 py-3 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center mx-auto shadow-lg hover:shadow-xl"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Add Achievement
-          </motion.button>
+          <div className="flex flex-col items-center">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleAddClick}
+              className="mt-6 px-6 py-3 bg-gradient-to-r from-pastel-lavender to-pastel-pink dark:from-purple-500 dark:to-pink-500 hover:from-pastel-pink hover:to-pastel-orange dark:hover:from-pink-500 dark:hover:to-orange-500 text-white font-bold rounded-xl transition-all duration-300 flex items-center mx-auto shadow-lg hover:shadow-xl"
+            >
+              {isAuthenticated ? <Plus className="w-5 h-5 mr-2" /> : <Lock className="w-5 h-5 mr-2" />}
+              {isAuthenticated ? 'Add Achievement' : 'Sign In to Add'}
+            </motion.button>
+
+            {isAuthenticated && user && (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Signed in as {user.email}
+              </p>
+            )}
+          </div>
         </motion.div>
+
+        {/* Authentication Modal */}
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          onSuccess={handleAuthSuccess}
+        />
 
         {/* Add Achievement Form Modal */}
         <AnimatePresence>
-          {showAddForm && (
+          {showAddForm && isAuthenticated && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
