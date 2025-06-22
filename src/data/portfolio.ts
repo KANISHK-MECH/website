@@ -48,7 +48,7 @@ export const internships: Internship[] = [
 ];
 
 export const certifications: Certification[] = [
-  // All certifications removed - start with empty array
+  // All certifications completely removed from frontend
 ];
 
 export const achievements: Achievement[] = [
