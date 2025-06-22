@@ -30,7 +30,8 @@ export function useDatabase() {
       const storedAchievements = localStorage.getItem('portfolio_achievements');
 
       setState({
-        projects: storedProjects ? JSON.parse(storedProjects) : initialProjects,
+        // Projects start empty - only load from localStorage if exists
+        projects: storedProjects ? JSON.parse(storedProjects) : [],
         internships: storedInternships ? JSON.parse(storedInternships) : initialInternships,
         certifications: storedCertifications ? JSON.parse(storedCertifications) : initialCertifications,
         achievements: storedAchievements ? JSON.parse(storedAchievements) : initialAchievements,
@@ -38,8 +39,8 @@ export function useDatabase() {
         error: null
       });
 
-      // Save initial data if not exists
-      if (!storedProjects) localStorage.setItem('portfolio_projects', JSON.stringify(initialProjects));
+      // Save initial data if not exists (projects start as empty array)
+      if (!storedProjects) localStorage.setItem('portfolio_projects', JSON.stringify([]));
       if (!storedInternships) localStorage.setItem('portfolio_internships', JSON.stringify(initialInternships));
       if (!storedCertifications) localStorage.setItem('portfolio_certifications', JSON.stringify(initialCertifications));
       if (!storedAchievements) localStorage.setItem('portfolio_achievements', JSON.stringify(initialAchievements));
@@ -65,83 +66,91 @@ export function useDatabase() {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
-      const currentData = state[type];
-      const newData = [item, ...currentData];
+      // Use a callback to ensure we have the latest state
+      setState(prev => {
+        const currentData = prev[type];
+        const newData = [item, ...currentData];
+        
+        // Save to localStorage
+        const saved = saveToStorage(type, newData);
+        if (saved) {
+          return { 
+            ...prev, 
+            [type]: newData,
+            loading: false,
+            error: null 
+          };
+        } else {
+          return { ...prev, loading: false, error: `Failed to save ${type}` };
+        }
+      });
       
-      const saved = saveToStorage(type, newData);
-      if (saved) {
-        setState(prev => ({ 
-          ...prev, 
-          [type]: newData,
-          loading: false,
-          error: null 
-        }));
-        return true;
-      } else {
-        setState(prev => ({ ...prev, loading: false, error: `Failed to save ${type}` }));
-        return false;
-      }
+      return true;
     } catch (error) {
       setState(prev => ({ ...prev, loading: false, error: `Error adding ${type}` }));
       return false;
     }
-  }, [state, saveToStorage]);
+  }, [saveToStorage]);
 
   // Update item
   const updateItem = useCallback(async (type: keyof Omit<DatabaseState, 'loading' | 'error'>, id: string, updates: any) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
-      const currentData = state[type];
-      const newData = currentData.map((item: any) => 
-        item.id === id ? { ...item, ...updates } : item
-      );
+      setState(prev => {
+        const currentData = prev[type];
+        const newData = currentData.map((item: any) => 
+          item.id === id ? { ...item, ...updates } : item
+        );
+        
+        const saved = saveToStorage(type, newData);
+        if (saved) {
+          return { 
+            ...prev, 
+            [type]: newData,
+            loading: false,
+            error: null 
+          };
+        } else {
+          return { ...prev, loading: false, error: `Failed to update ${type}` };
+        }
+      });
       
-      const saved = saveToStorage(type, newData);
-      if (saved) {
-        setState(prev => ({ 
-          ...prev, 
-          [type]: newData,
-          loading: false,
-          error: null 
-        }));
-        return true;
-      } else {
-        setState(prev => ({ ...prev, loading: false, error: `Failed to update ${type}` }));
-        return false;
-      }
+      return true;
     } catch (error) {
       setState(prev => ({ ...prev, loading: false, error: `Error updating ${type}` }));
       return false;
     }
-  }, [state, saveToStorage]);
+  }, [saveToStorage]);
 
   // Delete item
   const deleteItem = useCallback(async (type: keyof Omit<DatabaseState, 'loading' | 'error'>, id: string) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
-      const currentData = state[type];
-      const newData = currentData.filter((item: any) => item.id !== id);
+      setState(prev => {
+        const currentData = prev[type];
+        const newData = currentData.filter((item: any) => item.id !== id);
+        
+        const saved = saveToStorage(type, newData);
+        if (saved) {
+          return { 
+            ...prev, 
+            [type]: newData,
+            loading: false,
+            error: null 
+          };
+        } else {
+          return { ...prev, loading: false, error: `Failed to delete ${type}` };
+        }
+      });
       
-      const saved = saveToStorage(type, newData);
-      if (saved) {
-        setState(prev => ({ 
-          ...prev, 
-          [type]: newData,
-          loading: false,
-          error: null 
-        }));
-        return true;
-      } else {
-        setState(prev => ({ ...prev, loading: false, error: `Failed to delete ${type}` }));
-        return false;
-      }
+      return true;
     } catch (error) {
       setState(prev => ({ ...prev, loading: false, error: `Error deleting ${type}` }));
       return false;
     }
-  }, [state, saveToStorage]);
+  }, [saveToStorage]);
 
   // Initialize data on mount
   useEffect(() => {

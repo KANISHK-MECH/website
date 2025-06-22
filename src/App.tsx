@@ -34,14 +34,17 @@ function App() {
       img.src = src;
     });
 
-    // Clear projects from localStorage to ensure fresh start
-    localStorage.removeItem('portfolio_projects');
-
-    // Initialize database with default data if empty (excluding projects)
+    // Initialize database with default data if empty (excluding projects which should start empty)
     const initializeDatabase = () => {
       const hasInternships = localStorage.getItem('portfolio_internships');
       const hasCertifications = localStorage.getItem('portfolio_certifications');
       const hasAchievements = localStorage.getItem('portfolio_achievements');
+      const hasProjects = localStorage.getItem('portfolio_projects');
+      
+      // Initialize projects as empty array if not exists
+      if (!hasProjects) {
+        localStorage.setItem('portfolio_projects', JSON.stringify([]));
+      }
       
       if (!hasInternships || !hasCertifications || !hasAchievements) {
         // Import and save initial data (excluding projects)
