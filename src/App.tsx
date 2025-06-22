@@ -33,34 +33,6 @@ function App() {
       const img = new Image();
       img.src = src;
     });
-
-    // Initialize database with default data if empty
-    const initializeDatabase = () => {
-      const hasInternships = localStorage.getItem('portfolio_internships');
-      const hasCertifications = localStorage.getItem('portfolio_certifications');
-      const hasAchievements = localStorage.getItem('portfolio_achievements');
-      const hasProjects = localStorage.getItem('portfolio_projects');
-      
-      // Initialize as empty arrays if not exists
-      if (!hasProjects) {
-        localStorage.setItem('portfolio_projects', JSON.stringify([]));
-      }
-      
-      // Don't override existing certifications - let them load from localStorage
-      if (!hasCertifications) {
-        localStorage.setItem('portfolio_certifications', JSON.stringify([]));
-      }
-      
-      if (!hasInternships || !hasAchievements) {
-        // Import and save initial data (excluding projects and certifications)
-        import('./data/portfolio').then(({ internships, achievements }) => {
-          if (!hasInternships) localStorage.setItem('portfolio_internships', JSON.stringify(internships));
-          if (!hasAchievements) localStorage.setItem('portfolio_achievements', JSON.stringify(achievements));
-        });
-      }
-    };
-
-    initializeDatabase();
   }, []);
 
   return (
