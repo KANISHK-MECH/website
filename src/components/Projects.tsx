@@ -133,6 +133,21 @@ const Projects: React.FC = memo(() => {
     setShowAddForm(false);
   }, []);
 
+  // Function to get project image - check for uploaded image first, then fallback to static images
+  const getProjectImage = useCallback((project: Project & { imageUrl?: string }) => {
+    // If project has uploaded image, use it
+    if (project.imageUrl) {
+      return project.imageUrl;
+    }
+    
+    // For specific projects, use static images
+    if (project.title === 'Vintage RC Aircraft' || project.id === '4') {
+      return '/WhatsApp Image 2025-06-22 at 8.24.50 PM.jpeg';
+    }
+    
+    return null;
+  }, []);
+
   return (
     <section id="projects" className="py-20 bg-gradient-to-br from-pastel-cream/10 via-white to-pastel-lavender/10 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/50 relative overflow-hidden">
       {/* Simplified Background */}
@@ -395,6 +410,7 @@ const Projects: React.FC = memo(() => {
           {filteredProjects.map((project, index) => {
             const colorClass = getCategoryColor(project.category);
             const projectWithImage = project as Project & { imageUrl?: string };
+            const projectImage = getProjectImage(projectWithImage);
             
             return (
               <motion.div
@@ -409,28 +425,34 @@ const Projects: React.FC = memo(() => {
               >
                 {/* Project Image */}
                 <div className="relative h-40 overflow-hidden">
-                  {projectWithImage.imageUrl ? (
+                  {projectImage ? (
                     <div className="relative w-full h-full">
                       <img
-                        src={projectWithImage.imageUrl}
+                        src={projectImage}
                         alt={project.title}
                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                         loading="lazy"
+                        onError={(e) => {
+                          // Fallback to placeholder if image fails to load
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
                       <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full p-2">
                         <Camera className="w-4 h-4 text-white" />
                       </div>
                     </div>
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400">
-                      <div className="text-center p-4">
-                        <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
-                        <p className="font-bold text-sm">Project Showcase</p>
-                        <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
-                      </div>
+                  ) : null}
+                  
+                  {/* Fallback placeholder - shown when no image or image fails to load */}
+                  <div className={`w-full h-full bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400 ${projectImage ? 'hidden' : ''}`}>
+                    <div className="text-center p-4">
+                      <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
+                      <p className="font-bold text-sm">Project Showcase</p>
+                      <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
                     </div>
-                  )}
+                  </div>
                 </div>
 
                 {/* Project Content */}
