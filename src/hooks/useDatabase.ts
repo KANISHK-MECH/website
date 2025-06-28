@@ -25,6 +25,7 @@ export function useDatabase() {
   const fetchData = useCallback(async () => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
+      console.log('Fetching data from Supabase...');
 
       // Fetch all data in parallel
       const [projectsRes, internshipsRes, certificationsRes, achievementsRes] = await Promise.all([
@@ -34,11 +35,30 @@ export function useDatabase() {
         supabase.from('achievements').select('*').order('created_at', { ascending: false })
       ]);
 
+      console.log('Database responses:', {
+        projects: projectsRes,
+        internships: internshipsRes,
+        certifications: certificationsRes,
+        achievements: achievementsRes
+      });
+
       // Check for errors
-      if (projectsRes.error) throw projectsRes.error;
-      if (internshipsRes.error) throw internshipsRes.error;
-      if (certificationsRes.error) throw certificationsRes.error;
-      if (achievementsRes.error) throw achievementsRes.error;
+      if (projectsRes.error) {
+        console.error('Projects error:', projectsRes.error);
+        throw projectsRes.error;
+      }
+      if (internshipsRes.error) {
+        console.error('Internships error:', internshipsRes.error);
+        throw internshipsRes.error;
+      }
+      if (certificationsRes.error) {
+        console.error('Certifications error:', certificationsRes.error);
+        throw certificationsRes.error;
+      }
+      if (achievementsRes.error) {
+        console.error('Achievements error:', achievementsRes.error);
+        throw achievementsRes.error;
+      }
 
       // Transform data to match frontend types
       const projects: Project[] = (projectsRes.data || []).map(p => ({
@@ -83,6 +103,13 @@ export function useDatabase() {
         imageUrl: a.image_url || undefined
       }));
 
+      console.log('Transformed data:', {
+        projects: projects.length,
+        internships: internships.length,
+        certifications: certifications.length,
+        achievements: achievements.length
+      });
+
       setState({
         projects,
         internships,
@@ -106,6 +133,7 @@ export function useDatabase() {
   const addItem = useCallback(async (type: keyof Omit<DatabaseState, 'loading' | 'error'>, item: any) => {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
+      console.log(`Adding ${type}:`, item);
 
       // Check if user is authenticated
       const { data: { user } } = await supabase.auth.getUser();
@@ -168,12 +196,18 @@ export function useDatabase() {
           throw new Error(`Unknown type: ${type}`);
       }
 
+      console.log(`Inserting into ${tableName}:`, insertData);
+
       const { error } = await supabase
         .from(tableName)
         .insert([insertData]);
 
-      if (error) throw error;
+      if (error) {
+        console.error(`Insert error for ${type}:`, error);
+        throw error;
+      }
 
+      console.log(`Successfully added ${type}`);
       // Refresh data after successful insert
       await fetchData();
       return true;
