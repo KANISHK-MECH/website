@@ -1,6 +1,7 @@
 import React, { useEffect, Suspense, lazy } from 'react';
 import Header from './components/Header';
 import Hero from './components/Hero';
+import DebugInfo from './components/DebugInfo';
 
 // Lazy load non-critical components
 const About = lazy(() => import('./components/About'));
@@ -77,6 +78,8 @@ function App() {
           <Footer />
         </Suspense>
       </main>
+      
+      <DebugInfo />
     </div>
   );
 }
