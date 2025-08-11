@@ -507,9 +507,13 @@ const Projects: React.FC = memo(() => {
                     {project.title}
                   </h3>
 
-                  <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
-                    {project.description}
-                  </p>
+                  <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 space-y-2">
+                    {project.description.split('.').filter(sentence => sentence.trim()).map((sentence, index) => (
+                      <p key={index} className="text-sm">
+                        {sentence.trim()}.
+                      </p>
+                    ))}
+                  </div>
 
                   {/* Tech Stack */}
                   <div className="flex flex-wrap gap-2">
