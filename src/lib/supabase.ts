@@ -3,17 +3,20 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
+let supabase;
+
 if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'your_supabase_project_url' || supabaseAnonKey === 'your_supabase_anon_key') {
   console.error('Supabase environment variables are missing or not configured properly.');
   console.error('Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file');
   // Use dummy values to prevent the Invalid URL error
   const dummyUrl = 'https://dummy.supabase.co';
   const dummyKey = 'dummy-key';
-  export const supabase = createClient(dummyUrl, dummyKey);
+  supabase = createClient(dummyUrl, dummyKey);
 } else {
-  export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
 
+export { supabase };
 
 // Database types
 export interface Database {
