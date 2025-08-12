@@ -1,6 +1,7 @@
+
 import React, { useState, memo, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check, Lock } from 'lucide-react';
+import { Camera, Rocket, Plane, Zap, Settings, Plus, X, Upload, Check, Lock, ChevronRight } from 'lucide-react';
 import { useDatabase } from '../hooks/useDatabase';
 import { useAuth } from '../hooks/useAuth';
 import { skills } from '../data/portfolio';
@@ -8,9 +9,15 @@ import { Project } from '../types';
 import ImageUpload from './ImageUpload';
 import AuthModal from './AuthModal';
 
+// Extend the Project type to include a dedicated 'specs' field
+interface ProjectWithSpecs extends Project {
+  specs: string[]; // Specs are now an array of strings
+}
+
 interface NewProject {
   title: string;
   description: string;
+  specs: string[]; // Added specs field
   category: 'UAV' | 'CAD' | 'Software' | 'Hardware';
   year: string;
   techStack: string[];
@@ -27,23 +34,23 @@ const Projects: React.FC = memo(() => {
   const [newProject, setNewProject] = useState<NewProject>({
     title: '',
     description: '',
+    specs: [], // Initialize new specs field
     category: 'UAV',
     year: new Date().getFullYear().toString(),
     techStack: [],
     image: undefined,
-    imagePreview: undefined
+    imagePreview: undefined,
   });
-  
+
   const categories = useMemo(() => ['All', 'UAV', 'CAD', 'Software', 'Hardware'], []);
-  
-  const filteredProjects = useMemo(() => 
-    activeFilter === 'All' 
-      ? projects 
+
+  const filteredProjects = useMemo(() =>
+    activeFilter === 'All'
+      ? projects
       : projects.filter(project => project.category === activeFilter),
     [activeFilter, projects]
   );
 
-  // Get all available technologies from skills data
   const availableTechnologies = useMemo(() => {
     const allTechs = skills.map(skill => skill.name);
     const additionalTechs = [
@@ -111,28 +118,28 @@ const Projects: React.FC = memo(() => {
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!isAuthenticated) {
       setShowAuthModal(true);
       return;
     }
-    
-    if (!newProject.title.trim() || !newProject.description.trim()) {
+
+    if (!newProject.title.trim() || !newProject.description.trim() || newProject.specs.length === 0) {
       alert('Please fill in all required fields');
       return;
     }
 
-    const projectToAdd: Project & { imageUrl?: string } = {
+    const projectToAdd: ProjectWithSpecs & { imageUrl?: string } = {
       id: `project-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: newProject.title.trim(),
       description: newProject.description.trim(),
+      specs: newProject.specs,
       category: newProject.category,
       year: newProject.year,
       techStack: newProject.techStack,
-      // Store the image preview URL for display
       imageUrl: newProject.imagePreview
     };
-    
+
     const success = await addItem('projects', projectToAdd);
     if (success) {
       resetForm();
@@ -146,51 +153,145 @@ const Projects: React.FC = memo(() => {
     setNewProject({
       title: '',
       description: '',
+      specs: [],
       category: 'UAV',
       year: new Date().getFullYear().toString(),
       techStack: [],
       image: undefined,
-      imagePreview: undefined
+      imagePreview: undefined,
     });
     setShowAddForm(false);
   }, []);
 
-  // Function to get project image - check for uploaded image first, then fallback to static images
   const getProjectImage = useCallback((project: Project & { imageUrl?: string }) => {
-    // If project has uploaded image, use it
     if (project.imageUrl) {
       return project.imageUrl;
     }
-    
-    // For specific projects, use static images
+
     if (project.title === 'Vintage RC Aircraft' || project.id === '4') {
       return '/WhatsApp Image 2025-06-22 at 8.24.50 PM.jpeg';
     }
-    
+
     return null;
   }, []);
+  
+  // Custom component for the project card - improved for readability
+  const ProjectCard = ({ project, index }) => {
+    const colorClass = getCategoryColor(project.category);
+    const projectWithImage = project as ProjectWithSpecs & { imageUrl?: string };
+    const projectImage = getProjectImage(projectWithImage);
 
+    return (
+      <motion.div
+        key={project.id}
+        layout
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05, duration: 0.4 }}
+        viewport={{ once: true }}
+        whileHover={{ y: -5 }}
+        className="group relative bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 overflow-hidden transition-all duration-300"
+      >
+        {/* Project Image and Category Tag */}
+        <div className="relative h-48 overflow-hidden">
+          {projectImage ? (
+            <div className="relative w-full h-full">
+              <img
+                src={projectImage}
+                alt={project.title}
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                  e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
+            </div>
+          ) : null}
+          <div className={`w-full h-full bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400 ${projectImage ? 'hidden' : ''}`}>
+            <div className="text-center p-4">
+              <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
+              <p className="font-bold text-sm">Project Showcase</p>
+              <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
+            </div>
+          </div>
+          <div className="absolute top-4 left-4">
+            <span className={`px-3 py-1 bg-gradient-to-r ${colorClass} text-white text-xs font-bold rounded-full shadow-lg`}>
+              {project.category}
+            </span>
+          </div>
+          <div className="absolute top-4 right-4 bg-white/50 dark:bg-gray-700/50 backdrop-blur-sm px-2 py-1 rounded-lg text-sm text-gray-500 dark:text-gray-400">
+            {project.year}
+          </div>
+        </div>
+
+        {/* Project Content - Reorganized for better readability */}
+        <div className="p-6 space-y-4">
+          <h3 className="text-xl font-bold text-gray-800 dark:text-white group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
+            {project.title}
+          </h3>
+
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Description</h4>
+            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              {project.description}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Key Specifications</h4>
+            <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 text-sm space-y-1">
+              {project.specs.map((spec, i) => (
+                <li key={i} className="flex items-start">
+                  <ChevronRight className="w-4 h-4 mr-2 flex-shrink-0 text-pastel-lavender dark:text-purple-400" />
+                  <span>{spec}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div className="space-y-2">
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Technologies</h4>
+            <div className="flex flex-wrap gap-2">
+              {project.techStack.slice(0, 3).map((tech, techIndex) => (
+                <span
+                  key={techIndex}
+                  className="bg-pastel-peach/20 dark:bg-orange-500/20 backdrop-blur-sm text-gray-600 dark:text-gray-300 text-xs px-2 py-1 rounded-lg border border-pastel-peach/30 dark:border-orange-400/50"
+                >
+                  {tech}
+                </span>
+              ))}
+              {project.techStack.length > 3 && (
+                <span className="bg-gradient-to-r from-pastel-lavender/20 to-pastel-pink/20 dark:from-purple-500/20 dark:to-pink-500/20 text-pastel-lavender dark:text-purple-400 text-xs px-2 py-1 rounded-lg border border-pastel-lavender/30 dark:border-purple-400/50">
+                  +{project.techStack.length - 3} more
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+  
   return (
     <section id="projects" className="py-20 bg-gradient-to-br from-pastel-cream/10 via-white to-pastel-lavender/10 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/50 relative overflow-hidden">
-      {/* Simplified Background */}
+      {/* Background and Header remain the same */}
       <div className="absolute inset-0 opacity-30">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(213,170,255,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_20%_50%,rgba(139,92,246,0.1),transparent_50%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_20%,rgba(250,208,201,0.05),transparent_50%)] dark:bg-[radial-gradient(circle_at_80%_20%,rgba(168,85,247,0.1),transparent_50%)]" />
       </div>
-
-      {/* Floating Elements */}
       <motion.div
         animate={{
           x: [0, 50, 0],
           y: [0, -25, 0],
-          rotate: [0, 90, 180]
+          rotate: [0, 90, 180],
         }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         className="absolute top-10 right-20 opacity-10 dark:opacity-15"
       >
         <Rocket className="w-20 h-20 text-pastel-lavender dark:text-purple-400" />
       </motion.div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -208,7 +309,7 @@ const Projects: React.FC = memo(() => {
           </p>
         </motion.div>
 
-        {/* Filter Buttons and Add Project Button */}
+        {/* Filter and Add Project Buttons remain the same */}
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -216,12 +317,11 @@ const Projects: React.FC = memo(() => {
           viewport={{ once: true }}
           className="flex flex-wrap justify-center items-center gap-3 mb-16"
         >
-          {/* Filter Buttons */}
           <div className="flex flex-wrap justify-center gap-3">
             {categories.map((category) => {
               const IconComponent = getCategoryIcon(category);
               const colorClass = getCategoryColor(category);
-              
+
               return (
                 <motion.button
                   key={category}
@@ -240,8 +340,6 @@ const Projects: React.FC = memo(() => {
               );
             })}
           </div>
-
-          {/* Add Project Button */}
           <div className="flex flex-col items-center">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -252,7 +350,7 @@ const Projects: React.FC = memo(() => {
               {isAuthenticated ? <Plus className="w-4 h-4 mr-2" /> : <Lock className="w-4 h-4 mr-2" />}
               {isAuthenticated ? 'Add Project' : 'Sign In to Add'}
             </motion.button>
-            
+
             {isAuthenticated && user && (
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                 Signed in as {user.email}
@@ -261,14 +359,12 @@ const Projects: React.FC = memo(() => {
           </div>
         </motion.div>
 
-        {/* Authentication Modal */}
+        {/* Auth and Add Project Modals remain the same */}
         <AuthModal
           isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
           onSuccess={handleAuthSuccess}
         />
-
-        {/* Add Project Form Modal */}
         <AnimatePresence>
           {showAddForm && isAuthenticated && (
             <motion.div
@@ -368,21 +464,39 @@ const Projects: React.FC = memo(() => {
                       {/* Description */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                          Description *
+                          Description * (Project Summary)
                         </label>
                         <textarea
                           value={newProject.description}
                           onChange={(e) => setNewProject(prev => ({ ...prev, description: e.target.value }))}
+                          rows={2}
+                          className="w-full px-4 py-3 bg-white/50 dark:bg-gray-700/50 border border-pastel-lavender/30 dark:border-purple-400/50 rounded-lg focus:ring-2 focus:ring-pastel-lavender dark:focus:ring-purple-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none"
+                          placeholder="A concise summary of the project..."
+                          required
+                        />
+                      </div>
+
+                      {/* Specifications List */}
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Key Specifications (one per line) *
+                        </label>
+                        <textarea
+                          value={newProject.specs.join('\n')}
+                          onChange={(e) => setNewProject(prev => ({ ...prev, specs: e.target.value.split('\n').filter(s => s.trim() !== '') }))}
                           rows={4}
                           className="w-full px-4 py-3 bg-white/50 dark:bg-gray-700/50 border border-pastel-lavender/30 dark:border-purple-400/50 rounded-lg focus:ring-2 focus:ring-pastel-lavender dark:focus:ring-purple-500 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 resize-none"
-                          placeholder="Describe your project..."
+                          placeholder="Example:
+- Collaborative with team members
+- Calibrate a 10-inch FPV freestyle drone
+- Optimized for extended flight endurance"
                           required
                         />
                       </div>
                     </div>
                   </div>
 
-                  {/* Technology Stack Selection */}
+                  {/* Technology Stack Selection - remains the same */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                       Technology Stack ({newProject.techStack.length} selected)
@@ -444,97 +558,9 @@ const Projects: React.FC = memo(() => {
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {filteredProjects.map((project, index) => {
-            const colorClass = getCategoryColor(project.category);
-            const projectWithImage = project as Project & { imageUrl?: string };
-            const projectImage = getProjectImage(projectWithImage);
-            
-            return (
-              <motion.div
-                key={project.id}
-                layout
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05, duration: 0.4 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-                className="group relative bg-gradient-to-br from-white/80 to-pastel-peach/10 dark:from-gray-800/50 dark:to-purple-900/20 backdrop-blur-sm rounded-2xl border border-pastel-lavender/20 dark:border-purple-400/30 hover:border-pastel-pink/40 dark:hover:border-pink-400/60 overflow-hidden transition-all duration-300"
-              >
-                {/* Project Image */}
-                <div className="relative h-40 overflow-hidden">
-                  {projectImage ? (
-                    <div className="relative w-full h-full">
-                      <img
-                        src={projectImage}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        loading="lazy"
-                        onError={(e) => {
-                          // Fallback to placeholder if image fails to load
-                          e.currentTarget.style.display = 'none';
-                          e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                      <div className="absolute top-3 right-3 bg-black/50 backdrop-blur-sm rounded-full p-2">
-                        <Camera className="w-4 h-4 text-white" />
-                      </div>
-                    </div>
-                  ) : null}
-                  
-                  {/* Fallback placeholder - shown when no image or image fails to load */}
-                  <div className={`w-full h-full bg-gradient-to-br from-pastel-peach/20 to-pastel-cream/20 dark:from-orange-500/20 dark:to-yellow-500/20 flex items-center justify-center text-gray-500 dark:text-gray-400 ${projectImage ? 'hidden' : ''}`}>
-                    <div className="text-center p-4">
-                      <Camera className="w-12 h-12 mx-auto mb-3 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors" />
-                      <p className="font-bold text-sm">Project Showcase</p>
-                      <p className="text-xs opacity-70 mt-1">Upload demo or screenshot</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Project Content */}
-                <div className="relative p-5 space-y-3">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className={`px-3 py-1 bg-gradient-to-r ${colorClass} text-white text-xs font-bold rounded-full shadow-lg`}>
-                      {project.category}
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400 text-sm font-medium bg-white/50 dark:bg-gray-700/50 px-2 py-1 rounded-lg">
-                      {project.year}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg font-bold text-gray-700 dark:text-gray-200 mb-2 group-hover:text-pastel-lavender dark:group-hover:text-purple-400 transition-colors">
-                    {project.title}
-                  </h3>
-
-                  <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4 space-y-2">
-                    {project.description.split('.').filter(sentence => sentence.trim()).map((sentence, index) => (
-                      <p key={index} className="text-sm">
-                        {sentence.trim()}.
-                      </p>
-                    ))}
-                  </div>
-
-                  {/* Tech Stack */}
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.slice(0, 3).map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="bg-pastel-peach/20 dark:bg-orange-500/20 backdrop-blur-sm text-gray-600 dark:text-gray-300 text-xs px-2 py-1 rounded-lg border border-pastel-peach/30 dark:border-orange-400/50"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {project.techStack.length > 3 && (
-                      <span className="bg-gradient-to-r from-pastel-lavender/20 to-pastel-pink/20 dark:from-purple-500/20 dark:to-pink-500/20 text-pastel-lavender dark:text-purple-400 text-xs px-2 py-1 rounded-lg border border-pastel-lavender/30 dark:border-purple-400/50">
-                        +{project.techStack.length - 3} more
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {filteredProjects.map((project, index) => (
+            <ProjectCard key={project.id} project={project as ProjectWithSpecs} index={index} />
+          ))}
         </motion.div>
 
         {filteredProjects.length === 0 && (
