@@ -8,8 +8,8 @@ let supabase;
 // Check if environment variables are properly configured
 const isConfigured = supabaseUrl && 
                     supabaseAnonKey && 
-                    supabaseUrl !== 'your_supabase_project_url' && 
-                    supabaseAnonKey !== 'your_supabase_anon_key' &&
+                    supabaseUrl !== 'https://bjxuivvcwxvhsdtzdhfq.supabase.co' && 
+                    supabaseAnonKey !== 'sb_publishable_Qi88R4bCPfBvE7utlDLWMQ_ZZf8wkGA' &&
                     supabaseUrl.startsWith('https://') &&
                     supabaseUrl.includes('.supabase.co');
 
