@@ -8,6 +8,7 @@ const About = lazy(() => import('./components/About'));
 const Education = lazy(() => import('./components/Education'));
 const Internships = lazy(() => import('./components/Internships'));
 const Projects = lazy(() => import('./components/Projects'));
+const Videos = lazy(() => import('./components/Videos'));
 const Skills = lazy(() => import('./components/Skills'));
 const Certifications = lazy(() => import('./components/Certifications'));
 const Achievements = lazy(() => import('./components/Achievements'));
@@ -56,6 +57,10 @@ function App() {
         
         <Suspense fallback={<SectionLoader />}>
           <Projects />
+        </Suspense>
+        
+        <Suspense fallback={<SectionLoader />}>
+          <Videos />
         </Suspense>
         
         <Suspense fallback={<SectionLoader />}>

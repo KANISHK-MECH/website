@@ -40,6 +40,19 @@ export interface Achievement {
   imageUrl?: string; // Add imageUrl field for storing uploaded images
 }
 
+export interface Video {
+  id: string;
+  title: string;
+  description: string;
+  videoUrl: string; // YouTube/Vimeo embed URL
+  thumbnailUrl?: string; // Custom thumbnail
+  projectLink?: string; // Link to related project
+  category: 'UAV' | 'CAD' | 'Software' | 'Hardware';
+  year: string;
+  duration?: string; // Video duration
+  tags: string[]; // Video tags
+}
+
 export interface Skill {
   name: string;
   category: 'Flight Controllers' | 'UAV Software' | 'Design Software' | 'Programming';

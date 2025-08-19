@@ -206,6 +206,53 @@ export interface Database {
           updated_at?: string;
         };
       };
+      videos: {
+        Row: {
+          id: string;
+          title: string;
+          description: string;
+          video_url: string;
+          thumbnail_url: string | null;
+          project_link: string | null;
+          category: 'UAV' | 'CAD' | 'Software' | 'Hardware';
+          year: string;
+          duration: string | null;
+          tags: string[];
+          user_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          title: string;
+          description: string;
+          video_url: string;
+          thumbnail_url?: string | null;
+          project_link?: string | null;
+          category: 'UAV' | 'CAD' | 'Software' | 'Hardware';
+          year: string;
+          duration?: string | null;
+          tags?: string[];
+          user_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          title?: string;
+          description?: string;
+          video_url?: string;
+          thumbnail_url?: string | null;
+          project_link?: string | null;
+          category?: 'UAV' | 'CAD' | 'Software' | 'Hardware';
+          year?: string;
+          duration?: string | null;
+          tags?: string[];
+          user_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 }

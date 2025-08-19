@@ -1,6 +1,6 @@
 import React, { useState, useEffect, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Moon, Sun, Menu, X, Home, User, BookOpen, Briefcase, Code, Award, Trophy, Mail } from 'lucide-react';
+import { Moon, Sun, Menu, X, Home, User, BookOpen, Briefcase, Code, Award, Trophy, Mail, Play } from 'lucide-react';
 import { useTheme } from '../hooks/useTheme';
 
 const Header: React.FC = memo(() => {
@@ -14,6 +14,7 @@ const Header: React.FC = memo(() => {
     { name: 'Education', href: '#education', icon: BookOpen },
     { name: 'Experience', href: '#internships', icon: Briefcase },
     { name: 'Projects', href: '#projects', icon: Code },
+    { name: 'Videos', href: '#videos', icon: Play },
     { name: 'Certifications', href: '#certifications', icon: Award },
     { name: 'Achievements', href: '#achievements', icon: Trophy },
     { name: 'Contact', href: '#contact', icon: Mail },

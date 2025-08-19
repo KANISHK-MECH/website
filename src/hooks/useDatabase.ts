@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
-import { Project, Internship, Certification, Achievement } from '../types';
+import { Project, Internship, Certification, Achievement, Video } from '../types';
 
 export interface DatabaseState {
   projects: Project[];
   internships: Internship[];
   certifications: Certification[];
   achievements: Achievement[];
+  videos: Video[];
   loading: boolean;
   error: string | null;
 }
@@ -17,6 +18,7 @@ export function useDatabase() {
     internships: [],
     certifications: [],
     achievements: [],
+    videos: [],
     loading: true,
     error: null
   });
@@ -28,18 +30,20 @@ export function useDatabase() {
       console.log('Fetching data from Supabase...');
 
       // Fetch all data in parallel
-      const [projectsRes, internshipsRes, certificationsRes, achievementsRes] = await Promise.all([
+      const [projectsRes, internshipsRes, certificationsRes, achievementsRes, videosRes] = await Promise.all([
         supabase.from('projects').select('*').order('created_at', { ascending: false }),
         supabase.from('internships').select('*').order('created_at', { ascending: false }),
         supabase.from('certifications').select('*').order('created_at', { ascending: false }),
-        supabase.from('achievements').select('*').order('created_at', { ascending: false })
+        supabase.from('achievements').select('*').order('created_at', { ascending: false }),
+        supabase.from('videos').select('*').order('created_at', { ascending: false })
       ]);
 
       console.log('Database responses:', {
         projects: projectsRes,
         internships: internshipsRes,
         certifications: certificationsRes,
-        achievements: achievementsRes
+        achievements: achievementsRes,
+        videos: videosRes
       });
 
       // Check for errors
@@ -58,6 +62,10 @@ export function useDatabase() {
       if (achievementsRes.error) {
         console.error('Achievements error:', achievementsRes.error);
         throw achievementsRes.error;
+      }
+      if (videosRes.error) {
+        console.error('Videos error:', videosRes.error);
+        throw videosRes.error;
       }
 
       // Transform data to match frontend types
@@ -103,11 +111,25 @@ export function useDatabase() {
         imageUrl: a.image_url || undefined
       }));
 
+      const videos: Video[] = (videosRes.data || []).map(v => ({
+        id: v.id,
+        title: v.title,
+        description: v.description,
+        videoUrl: v.video_url,
+        thumbnailUrl: v.thumbnail_url || undefined,
+        projectLink: v.project_link || undefined,
+        category: v.category,
+        year: v.year,
+        duration: v.duration || undefined,
+        tags: v.tags || []
+      }));
+
       console.log('Transformed data:', {
         projects: projects.length,
         internships: internships.length,
         certifications: certifications.length,
-        achievements: achievements.length
+        achievements: achievements.length,
+        videos: videos.length
       });
 
       setState({
@@ -115,6 +137,7 @@ export function useDatabase() {
         internships,
         certifications,
         achievements,
+        videos,
         loading: false,
         error: null
       });
@@ -190,6 +213,20 @@ export function useDatabase() {
             year: item.year,
             category: item.category,
             image_url: item.imageUrl || null
+          };
+          break;
+        case 'videos':
+          tableName = 'videos';
+          insertData = {
+            title: item.title,
+            description: item.description,
+            video_url: item.videoUrl,
+            thumbnail_url: item.thumbnailUrl || null,
+            project_link: item.projectLink || null,
+            category: item.category,
+            year: item.year,
+            duration: item.duration || null,
+            tags: item.tags || []
           };
           break;
         default:
@@ -285,6 +322,20 @@ export function useDatabase() {
             ...(updates.imageUrl !== undefined && { image_url: updates.imageUrl })
           };
           break;
+        case 'videos':
+          tableName = 'videos';
+          updateData = {
+            ...(updates.title && { title: updates.title }),
+            ...(updates.description && { description: updates.description }),
+            ...(updates.videoUrl && { video_url: updates.videoUrl }),
+            ...(updates.thumbnailUrl !== undefined && { thumbnail_url: updates.thumbnailUrl }),
+            ...(updates.projectLink !== undefined && { project_link: updates.projectLink }),
+            ...(updates.category && { category: updates.category }),
+            ...(updates.year && { year: updates.year }),
+            ...(updates.duration !== undefined && { duration: updates.duration }),
+            ...(updates.tags && { tags: updates.tags })
+          };
+          break;
         default:
           throw new Error(`Unknown type: ${type}`);
       }
@@ -335,6 +386,9 @@ export function useDatabase() {
           break;
         case 'achievements':
           tableName = 'achievements';
+          break;
+        case 'videos':
+          tableName = 'videos';
           break;
         default:
           throw new Error(`Unknown type: ${type}`);
