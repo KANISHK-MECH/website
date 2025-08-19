@@ -5,14 +5,37 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 let supabase;
 
-if (!supabaseUrl || !supabaseAnonKey || supabaseUrl === 'your_supabase_project_url' || supabaseAnonKey === 'your_supabase_anon_key') {
+// Check if environment variables are properly configured
+const isConfigured = supabaseUrl && 
+                    supabaseAnonKey && 
+                    supabaseUrl !== 'your_supabase_project_url' && 
+                    supabaseAnonKey !== 'your_supabase_anon_key' &&
+                    supabaseUrl.startsWith('https://') &&
+                    supabaseUrl.includes('.supabase.co');
+
+if (!isConfigured) {
   console.error('Supabase environment variables are missing or not configured properly.');
   console.error('Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file');
-  // Use dummy values to prevent the Invalid URL error
-  const dummyUrl = 'https://dummy.supabase.co';
-  const dummyKey = 'dummy-key';
-  supabase = createClient(dummyUrl, dummyKey);
+  console.error('Current values:', { supabaseUrl, supabaseAnonKey: supabaseAnonKey ? '[HIDDEN]' : 'undefined' });
+  
+  // Create a mock client that throws helpful errors
+  supabase = {
+    from: () => ({
+      select: () => Promise.reject(new Error('Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file')),
+      insert: () => Promise.reject(new Error('Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file')),
+      update: () => Promise.reject(new Error('Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file')),
+      delete: () => Promise.reject(new Error('Supabase not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in your .env file')),
+    }),
+    auth: {
+      signUp: () => Promise.reject(new Error('Supabase not configured')),
+      signInWithPassword: () => Promise.reject(new Error('Supabase not configured')),
+      signOut: () => Promise.reject(new Error('Supabase not configured')),
+      getUser: () => Promise.reject(new Error('Supabase not configured')),
+      onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } })
+    }
+  };
 } else {
+  console.log('Supabase configured successfully');
   supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
 
