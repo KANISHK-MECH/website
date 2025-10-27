@@ -28,17 +28,15 @@ export function useDatabase() {
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
       console.log('Fetching data from Supabase...');
-    // Check if Supabase is properly configured
-    if (!supabase.from) {
-      setError('Supabase is not properly configured. Please check your environment variables.');
-      setLoading(false);
-      return;
-    }
-    
 
-      // Check if Supabase is properly configured
+      // Check if Supabase is properly configured before making any requests
       if (!supabase || typeof supabase.from !== 'function') {
-        throw new Error('Supabase is not properly configured. Please check your environment variables.');
+        setState(prev => ({ 
+          ...prev, 
+          loading: false, 
+          error: 'Supabase is not properly configured. Please check your environment variables.' 
+        }));
+        return;
       }
 
       // Fetch all data in parallel
