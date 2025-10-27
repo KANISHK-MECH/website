@@ -29,6 +29,11 @@ export function useDatabase() {
       setState(prev => ({ ...prev, loading: true, error: null }));
       console.log('Fetching data from Supabase...');
 
+      // Check if Supabase is properly configured
+      if (!supabase || typeof supabase.from !== 'function') {
+        throw new Error('Supabase is not properly configured. Please check your environment variables.');
+      }
+
       // Fetch all data in parallel
       const [projectsRes, internshipsRes, certificationsRes, achievementsRes, videosRes] = await Promise.all([
         supabase.from('projects').select('*').order('created_at', { ascending: false }),
